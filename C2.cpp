@@ -4,11 +4,16 @@
 #include <string>
 #include <cstdlib>
 #include <sys/ptrace.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <cstring>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
 long long bs3 = 0xFCC7752FDB865D11;
 long long bs4 = 0x51982D5DCF0B2489;
+
+std::string key;
 
 //interrupt handler for ctrl+c, we can clean up nicely here and not leave atifacts from running on the system
 void handle_sigint(int signal){
@@ -34,23 +39,23 @@ int gen_key(){
     return sum1(masking_func(key1, bs1), masking_func(key2, bs2)) + sum1(masking_func(key3, bs3), masking_func(key4, bs4));
 }
 
-int gen_seed(){
-
-    return 500;
-}
-
 /*
 Made this a global variable so we can generate a random number at random points and not make it as clear where the generation
 starts for the stream_encrypt function
 */
 std::mt19937 prng(gen_key());
 
+int gen_seed(){
+    for(int i = 0; i < 57; i++){
+        key.append(std::to_string(prng()));
+    }
+    return 500;
+}
+
 int sum(int a, int b){
     prng();
     return a + b;
 }
-
-
 
 int pow(int a, int b){
     int total = 0;
@@ -62,14 +67,49 @@ int pow(int a, int b){
     return total;
 }
 
+void encrypt(unsigned char* temp){
+    for(int i = 0; i < 21; i++){
+        temp[i] ^= key[i%key.size()];
+        temp[i] += (i % 7);
+        temp[i] = (temp[i] << 1) | (temp[i] >> 7);
+    }
+}
+
+unsigned char decrypt_char(unsigned char ch, int offset){
+    unsigned char decrypted;
+    if((prng()%2) < 2){
+        decrypted = ch - (offset%7);
+        decrypted ^= key[offset % key.size()];
+        return decrypted;
+    }
+    else{
+        return 0x01;
+    }
+    
+}
+
+void decrypt_string(unsigned char * str){
+    int i = 0;
+    //size_t str_len = strlen(str);
+    for(;i < 21; i++){
+        str[i] = (str[i] >> 1) | (str[i] << 7);
+        str[i] = decrypt_char(str[i], i);
+    }
+}
+
 //Stream encrypt function that relies on a psudeo random number generator and XOR to generate a ciphertxt from a plain txt
 void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
     int index = 0;
     while(*plaintxt != '\0'){
         char byte = prng() % 256;
         ciphertxt[index] = *plaintxt ^ byte;
+
+        ciphertxt[index] ^= pow(byte, byte) % 256;
+
         plaintxt++;
         index++;
+
+        ciphertxt[index] ^= pow(byte, byte) % 256;
     }
     ciphertxt[index] = '\0';
 }
@@ -132,6 +172,13 @@ int main(){
     // Register the signal handler
     signal(SIGINT, handle_sigint);
 
+    //ensure the program is being run in sudo mode
+    if (geteuid() != 0) {
+        std::cerr << "This program must be run as root (sudo).\n";
+        return 1;
+    }
+
+    //encryption for the first part, needs to be removed before turn in
     char* pt = "WhyHelloThere\0";
     char ct[15];
 
@@ -141,9 +188,58 @@ int main(){
 
     std::cout << system_call(0) << std::endl;
 
-    for(;;){
+    int temp_var = gen_seed();
 
+    //std::cout << key << std::endl;
+
+    //temp/test mmap stuff
+    unsigned char code[] = {
+        0xC7, 0x45, 0xfc, 0xe9, 0x03, 0x00, 0x00,        // xor rax, rax
+        0xC7, 0x45, 0xf8, 0xeb, 0x04, 0x00, 0x00,        // xor rax, rax
+        0x8b, 0x45, 0xfc, 
+        0x33, 0x45, 0xf8, // add rax, 1
+        0xC3                      // ret
+    };
+
+    encrypt(code);
+
+    for(int i = 0; i < 21; i ++){
+        printf("%X ", code[i]);
     }
+
+    printf("\n\n");
+
+    decrypt_string(code);
+
+    for(int i = 0; i < 21; i ++){
+        printf("%X ", code[i]);
+    }
+
+    size_t code_size = sizeof(code);
+
+    // Allocate memory for code with read, write, and execute permissions
+    void* exec_mem = mmap(NULL, code_size, PROT_READ | PROT_WRITE | PROT_EXEC,
+                          MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+    if (exec_mem == MAP_FAILED) {
+        perror("mmap");
+        return 1;
+    }
+
+    // Copy code into allocated memory
+    memcpy(exec_mem, code, code_size);
+
+    // Cast memory to a function pointer and execute it
+    auto func = (int(*)())exec_mem;
+    int result = func();
+    std::cout << "Result of executing self-modified code: " << result << std::endl;
+
+    // Free memory
+    munmap(exec_mem, code_size);
+
+    // for(;;){
+
+    // }
 
     return 0;
 }
