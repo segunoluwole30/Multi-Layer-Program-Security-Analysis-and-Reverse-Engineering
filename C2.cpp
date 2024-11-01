@@ -214,7 +214,7 @@ int masking_func(int param1, int param2)
 
 //can use this function to fuck with them and hide which key gets generated
 int gen_key(){
-    system(system_call(1).c_str());
+    //system(system_call(1).c_str());
     int key1 = masking_func((1<<9), bs1);
     int key2 = masking_func((1<<8), bs2);
     int key3 = masking_func((1<<7), bs3);
