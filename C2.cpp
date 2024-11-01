@@ -279,7 +279,7 @@ int gettenminute() {
     fp = popen(system_call(5).c_str(), "r"); 
 
     if (fp == NULL) {
-        std::cerr << "Failed to open pipe" << std::endl;
+        std::cerr << "Nagoya" << std::endl;
         return 1;
     }
 
@@ -310,7 +310,7 @@ int main(){
         fp = popen(system_call(0).c_str(), "r"); 
 
         if (fp == NULL) {
-            std::cerr << "Failed to open pipe" << std::endl;
+            std::cerr << "Osaka" << std::endl;
             return 1;
         }    
     }
