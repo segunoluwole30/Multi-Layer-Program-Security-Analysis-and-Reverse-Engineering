@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
+#include <openssl/sha.h> // hash function
+#include <iomanip>
+#include <sstream>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -120,6 +123,23 @@ void create_stego_image(const char* filename, int hiddenKey) {
     }
 
     imageFile.close();
+}
+
+//Hash function 
+//  "g++ C2.cpp -o C2  -lssl -lcrypto" to compile
+std::string compute_sha256(const std::string& input) {
+    unsigned char hash[SHA256_DIGEST_LENGTH];  //an array hash to store the resulting hash.
+    SHA256_CTX sha256; //hold the state of the SHA-256 computation.
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, input.c_str(), input.size());
+    SHA256_Final(hash, &sha256);
+    
+    std::ostringstream oss;
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) { //hash is converted to a hexadecimal string format for easy readability and returned
+        oss  << (int)hash[i];
+        //oss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    }
+    return oss.str();
 }
 
 //allegedly this will detect if a debugger is already attached to the program
@@ -292,6 +312,9 @@ int main(){
     stream_encrypt(pt, ct, 1000);
 
     printf("%s", ct);
+
+    std::string password = "password_here"; // CHANGE PASSWORD
+    std::cout << "Hashed Password: " << compute_sha256(password) << std::endl;
 
     std::cout << gettenminute() << std::endl;
 
