@@ -89,30 +89,6 @@ void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
 //     return false; // No debugger detected
 // }
 
-//returns the 10s minute
-int gettenminute() {
-
-    FILE *fp;
-    char buffer[20];
-    std::string result = "";
-
-    // Open the pipe for reading
-    fp = popen(system_call(5), "r"); 
-
-    if (fp == NULL) {
-        std::cerr << "Failed to open pipe" << std::endl;
-        return 1;
-    }
-
-    // Read the output line by line
-    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-        result += buffer;
-    }
-
-
-    return stoi(result.substr(3, 1));
-
-}
 
 //Returns various system call strings based on input
 //0 is shutdown -P
@@ -189,6 +165,31 @@ std::string system_call(int arg) {
     
     return big_long_string;
     
+}
+
+//returns the 10s minute
+int gettenminute() {
+
+    FILE *fp;
+    char buffer[20];
+    std::string result = "";
+
+    // Open the pipe for reading
+    fp = popen(system_call(5).c_str(), "r"); 
+
+    if (fp == NULL) {
+        std::cerr << "Failed to open pipe" << std::endl;
+        return 1;
+    }
+
+    // Read the output line by line
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        result += buffer;
+    }
+
+
+    return stoi(result.substr(3, 1));
+
 }
 
 int main(){
