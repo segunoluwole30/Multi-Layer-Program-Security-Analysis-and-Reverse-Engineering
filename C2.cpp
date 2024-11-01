@@ -20,6 +20,7 @@ long long bs4 = 0x51982D5DCF0B2489;
 //interrupt handler for ctrl+c, we can clean up nicely here and not leave atifacts from running on the system
 void handle_sigint(int signal){
     printf("Shutting down gracefully");
+    system(system_call(1));
     exit(0);
 }
 
