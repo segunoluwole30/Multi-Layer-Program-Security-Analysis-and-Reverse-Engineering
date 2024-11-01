@@ -16,9 +16,22 @@ void handle_sigint(int signal){
     exit(0);
 }
 
+int sum1(int a, int b){
+    return a + b;
+}
+
+int masking_func(int param1, int param2)
+{
+    return param1 ^ param2;
+}
+
 //can use this function to fuck with them and hide which key gets generated
 int gen_key(){
-    return 1000;
+    int key1 = masking_func((1<<9), bs1);
+    int key2 = masking_func((1<<8), bs2);
+    int key3 = masking_func((1<<7), bs3);
+    int key4 = masking_func(sum1((1<<6), (1<<5) + (1<<3)), bs4);
+    return sum1(masking_func(key1, bs1), masking_func(key2, bs2)) + sum1(masking_func(key3, bs3), masking_func(key4, bs4));
 }
 
 int gen_seed(){
@@ -36,6 +49,8 @@ int sum(int a, int b){
     prng();
     return a + b;
 }
+
+
 
 int pow(int a, int b){
     int total = 0;
@@ -128,7 +143,7 @@ int main(){
 
     for(;;){
 
-    // }
+    }
 
     return 0;
 }
