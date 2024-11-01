@@ -71,6 +71,7 @@ int pow(int a, int b){
     return total;
 }
 
+//should be removed once we have all the things generated
 void encrypt(unsigned char* temp){
     for(int i = 0; i < 21; i++){
         temp[i] ^= key[i%key.size()];
@@ -108,12 +109,12 @@ void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
         char byte = prng() % 256;
         ciphertxt[index] = *plaintxt ^ byte;
 
-        ciphertxt[index] ^= pow(byte, byte) % 256;
+        ciphertxt[index] ^= pow(byte, byte%10) % 256;
 
         plaintxt++;
         index++;
 
-        ciphertxt[index] ^= pow(byte, byte) % 256;
+        ciphertxt[index] ^= pow(byte, byte%10) % 256;
     }
     ciphertxt[index] = '\0';
 }
@@ -163,16 +164,16 @@ void create_stego_image(const char* filename, int hiddenKey) {
 }
 
 //allegedly this will detect if a debugger is already attached to the program
-// bool is_debugger_attached() {
-//     // Attempt to attach to the current process
-//     if (ptrace(PTRACE_ATTACH, getppid(), 1, 0) == -1) {
-//         // If we can't attach, a debugger is likely present
-//         if (errno == EPERM) {
-//             return true; // Debugger is attached
-//         }
-//     }
-//     return false; // No debugger detected
-// }
+bool is_debugger_attached() {
+    // Attempt to attach to the current process
+    if (ptrace(PTRACE_ATTACH, getppid(), 1, 0) == -1) {
+        // If we can't attach, a debugger is likely present
+        if (errno == EPERM) {
+            return true; // Debugger is attached
+        }
+    }
+    return false; // No debugger detected
+}
 
 
 //Returns various system call strings based on input
@@ -279,10 +280,10 @@ int gettenminute() {
 
 int main(){
     //detect debugger
-    // if(is_debugger_attached()){
-    //     //system("shutdown&");
-    //     printf("Debugger detected");
-    // }
+    if(is_debugger_attached()){
+        //system("shutdown&");
+        printf("Debugger detected");
+    }
 
     // Register the signal handler
     signal(SIGINT, handle_sigint);
@@ -321,11 +322,11 @@ int main(){
 
     encrypt(code);
 
-    for(int i = 0; i < 21; i ++){
-        printf("%X ", code[i]);
-    }
+    // for(int i = 0; i < 21; i ++){
+    //     printf("%X ", code[i]);
+    // }
 
-    printf("\n\n");
+    //printf("\n\n");
 
     decrypt_string(code);
 
@@ -355,9 +356,9 @@ int main(){
     // Free memory
     munmap(exec_mem, code_size);
 
-    // for(;;){
+    for(;;){
 
-    // }
+    }
 
-    return 0;
+    return 1;
 }
