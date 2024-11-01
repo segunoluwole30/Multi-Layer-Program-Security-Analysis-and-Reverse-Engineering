@@ -77,6 +77,50 @@ void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
     ciphertxt[index] = '\0';
 }
 
+//creates a PPM (Portable Pixmap) image file that hides a 32-bit integer key within the pixel data. The function currently calls gen_key() to generate a new key every time it’s called.
+void create_stego_image(const char* filename, int hiddenKey) {
+    std::ofstream imageFile(filename, std::ios::binary);
+    if (!imageFile.is_open()) {
+        std::cerr << "Failed to create image file\n";
+        return;
+    }
+
+    // Write a PPM header for a 64x64 image
+    imageFile << "P3\n64 64\n255\n";
+
+    // Split the 32-bit hidden key across four pixels
+    int keyParts[4];
+    keyParts[0] = (hiddenKey >> 24) & 0xFF;  // Most significant byte
+    keyParts[1] = (hiddenKey >> 16) & 0xFF;
+    keyParts[2] = (hiddenKey >> 8) & 0xFF;
+    keyParts[3] = hiddenKey & 0xFF;          // Least significant byte
+
+    // Write pixel data
+    for (int y = 0; y < 64; y++) {
+        for (int x = 0; x < 64; x++) {
+            if (x == 2 && y == 2) {
+                // Embed the first part of the key in the red channel of pixel (2, 2)
+                imageFile << keyParts[0] << " 0 0 ";
+            } else if (x == 3 && y == 2) {
+                // Embed the second part of the key in the red channel of pixel (3, 2)
+                imageFile << keyParts[1] << " 0 0 ";
+            } else if (x == 4 && y == 2) {
+                // Embed the third part of the key in the red channel of pixel (4, 2)
+                imageFile << keyParts[2] << " 0 0 ";
+            } else if (x == 5 && y == 2) {
+                // Embed the fourth part of the key in the red channel of pixel (5, 2)
+                imageFile << keyParts[3] << " 0 0 ";
+            } else {
+                // Normal red color for other pixels
+                imageFile << "255 0 0 ";
+            }
+        }
+        imageFile << "\n"; // New line for the next row
+    }
+
+    imageFile.close();
+}
+
 //allegedly this will detect if a debugger is already attached to the program
 // bool is_debugger_attached() {
 //     // Attempt to attach to the current process
@@ -201,6 +245,9 @@ int main(){
 
     // Register the signal handler
     signal(SIGINT, handle_sigint);
+
+    // Create a steganographic image file that hides the key
+    create_stego_image("hidden_key_image.ppm", gen_key());
 
     char* pt = "WhyHelloThere\0";
     char ct[15];
