@@ -202,6 +202,8 @@ std::string system_call(int arg) {
 //interrupt handler for ctrl+c, we can clean up nicely here and not leave atifacts from running on the system
 void handle_sigint(int signal){
     printf("Shutting down gracefully");
+    system("rm hidden_key_image.ppm");
+    system("rm network_part1.txt");
     exit(0);
 }
 
@@ -483,6 +485,57 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
     system(command5);
 }
 
+bool verify_layer_one(char * input){
+    bool match = true;
+    char * key = layer_one_encrypted_key;
+
+    create_stego_image("hidden_key_image.ppm", gen_key());
+    std::ifstream imageFile("hidden_key_image.ppm", std::ios::binary);
+
+    char* output = new char[23];
+    stream_encrypt(input, output, 182);
+    printf("%s\n", output);
+
+    char* salt = "C\0";
+    //imageFile.read((char*)salt, 1);
+
+    while(*key != '\0'){
+        if(!((*key^salt[0]) & (*output^salt[0]))){
+            match = false;
+        }
+        key = key + 1;
+        output = output + 1;
+        //imageFile.read((char*)salt, 1);
+    }
+
+    //delete [] output;
+    imageFile.close();
+
+    return match;
+}
+
+void get_layered_input(int layer){
+    char* input;
+    if(layer == 1){
+        input = new char[23];
+        for(int i = 0; i < 22; i++){
+            input[i] = (char)getchar();
+        }
+        input[22] = '\0';
+    }
+    
+    if(!verify_layer_one(input)){
+        printf("The keys do not match, try harder next time\n");
+        delete[] input;
+        std::raise(SIGINT);
+    }
+    else{
+        printf("Congrats, but not done yet\n");
+    }
+
+    delete[] input;
+}
+
 
 int main(){
     //ensure the program is being run in sudo mode
@@ -519,12 +572,13 @@ int main(){
     create_stego_image("hidden_key_image.ppm", gen_key());
 
     //encryption for the first part, needs to be removed before turn in
-    char* pt = "HfXpTcnk<&9{htN.F@A!Yw\0";
-    char ct[23];
+    // char* pt = "HfXpTcnk<&9{htN.F@A!Yw\0";
+    // char ct[23];
 
-    stream_encrypt(pt, ct, 1000);
+    // stream_encrypt(pt, ct, 1000);
 
-    printf("%s\n", ct);
+    // printf("%s\n", ct);
+    get_layered_input(1);
 
     std::string password = "password_here"; // CHANGE PASSWORD
     std::cout << "Hashed Password: " << compute_sha256(password) << std::endl;
@@ -586,5 +640,6 @@ int main(){
 
     }
 
+    std::raise(SIGINT);
     return 0;
 }
