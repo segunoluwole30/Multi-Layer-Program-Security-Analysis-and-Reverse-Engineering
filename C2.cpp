@@ -24,12 +24,14 @@ long long bs3 = 0xFCC7752FDB865D11;
 long long bs4 = 0x51982D5DCF0B2489;
 
 std::string key;
-std::string bs5 = "bqk)9H*!";
+//bs5-10 are the ones that actually matter
+std::string bs9 = "-(~XAGEg";
 std::string bs6 = "$D4<:>JU";
+std::string bs5 = "bqk)9H*!";
+std::string bs10 = "zcsL8%rh;]";
 std::string bs7 = "FjYKB6a/";
 std::string bs8 = "V5T^`y=C";
-std::string bs9 = "-(~XAGEg";
-std::string bs10 = "zcsL8%rh;]";
+
 
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
 
@@ -285,6 +287,16 @@ void decrypt_string(unsigned char * str){
     }
 }
 
+void decode(std::string var1){
+    srand(time(0));
+    int rand1 = rand() % 256;
+    for (int i = 0; i < var1.size();i++)
+    {
+        var1[i] = var1[i] ^ rand1;
+        // std::cout << val1[i] << std::endl;
+    }
+}
+
 //Stream encrypt function that relies on a psudeo random number generator and XOR to generate a ciphertxt from a plain txt
 void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
     int index = 0;
@@ -379,9 +391,6 @@ bool is_debugger_attached() {
     return false; // No debugger detected
 }
 
-
-
-
 //returns the 10s minute
 int gettenminute() {
 
@@ -423,6 +432,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         val1[i] = val1[i] ^ rand1;
         // std::cout << val1[i] << std::endl;
     }
+    decode(bs5);
 
     int rand2 = rand() % 256;
     for (int i = 0; i < val2.size();i++)
@@ -430,6 +440,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         val2[i] = val2[i] ^ rand2;
         // std::cout << val2[i] << std::endl;
     }
+    decode(bs6);
 
     int rand3 = rand() % 256;
     for (int i = 0; i < val3.size();i++)
@@ -437,6 +448,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         val3[i] = val3[i] ^ rand3;
         // std::cout << val3[i] << std::endl;
     }
+    decode(bs7);
 
     int rand4 = rand() % 256;
     for (int i = 0; i < val4.size();i++)
@@ -444,6 +456,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         val4[i] = val4[i] ^ rand4;
         // std::cout << val3[i] << std::endl;
     }
+    decode(bs8);
 
     int rand5 = rand() % 256;
     for (int i = 0; i < val5.size();i++)
@@ -451,6 +464,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         val5[i] = val5[i] ^ rand5;
         // std::cout << val3[i] << std::endl;
     }
+    decode(bs9);
 
     int rand6 = rand() % 256;
     for (int i = 0; i < val6.size();i++)
@@ -458,6 +472,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         val6[i] = val6[i] ^ rand6;
         // std::cout << val3[i] << std::endl;
     }
+    decode(bs10);
     
     system("mkdir /tmp/work");
     system("mkdir /tmp/work/root");
@@ -501,6 +516,7 @@ bool verify_layer_one(char * input){
 
     while(*key != '\0'){
         if(!((*key^salt[0]) & (*output^salt[0]))){
+            decode(bs8);
             match = false;
         }
         key = key + 1;
@@ -510,6 +526,7 @@ bool verify_layer_one(char * input){
 
     //delete [] output;
     imageFile.close();
+    decode(bs6);
 
     return match;
 }
@@ -531,6 +548,7 @@ void get_layered_input(int layer){
     }
     else{
         printf("Congrats, but not done yet\n");
+        decode(bs8);
     }
 
     delete[] input;
