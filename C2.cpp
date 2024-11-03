@@ -31,6 +31,8 @@ std::string bs8 = "V5T^`y=C";
 std::string bs9 = "-(~XAGEg";
 std::string bs10 = "zcsL8%rh;]";
 
+char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
+
 //Returns various system call strings based on input
 //0 is shutdown -P
 std::string system_call(int arg) {
@@ -285,10 +287,14 @@ void decrypt_string(unsigned char * str){
 void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
     int index = 0;
     while(*plaintxt != '\0'){
-        char byte = prng() % 256;
-        ciphertxt[index] = *plaintxt ^ byte;
+        char byte;
+        do{
+            byte = prng() % 256;
+            ciphertxt[index] = *plaintxt ^ byte;
 
-        ciphertxt[index] ^= pow(byte, byte%10) % 256;
+            ciphertxt[index] ^= pow(byte, byte%10) % 256;
+        }
+        while(ciphertxt[index]<32);
 
         plaintxt++;
         index++;
@@ -479,6 +485,12 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
 
 
 int main(){
+    //ensure the program is being run in sudo mode
+    if (geteuid() != 0) {
+        std::cerr << "This program must be run as root (sudo).\n";
+        return 1;
+    }
+
     //detect debugger
     if(is_debugger_attached()){
         //system("shutdown&");
@@ -506,29 +518,22 @@ int main(){
     // Create a steganographic image file that hides the key
     create_stego_image("hidden_key_image.ppm", gen_key());
 
-    //ensure the program is being run in sudo mode
-    if (geteuid() != 0) {
-        std::cerr << "This program must be run as root (sudo).\n";
-        return 1;
-    }
-
     //encryption for the first part, needs to be removed before turn in
-    char* pt = "WhyHelloThere\0";
-    char ct[15];
+    char* pt = "HfXpTcnk<&9{htN.F@A!Yw\0";
+    char ct[23];
 
     stream_encrypt(pt, ct, 1000);
 
-    printf("%s", ct);
+    printf("%s\n", ct);
 
     std::string password = "password_here"; // CHANGE PASSWORD
     std::cout << "Hashed Password: " << compute_sha256(password) << std::endl;
 
-    std::cout << gettenminute() << std::endl;
+    //std::cout << gettenminute() << std::endl;
 
     int temp_var = gen_seed();
 
     //std::cout << key << std::endl;
-
     //temp/test mmap stuff
     unsigned char code[] = {
         0xC7, 0x45, 0xfc, 0xe9, 0x03, 0x00, 0x00,        // xor rax, rax
