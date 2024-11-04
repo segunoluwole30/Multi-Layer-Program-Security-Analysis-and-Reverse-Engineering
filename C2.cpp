@@ -21,6 +21,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <vector>
+#include <algorithm>
+#include <functional>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -39,6 +42,21 @@ std::string bs8 = "V5T^`y=C";
 
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
 
+int One() {
+    auto lambda = [](int x) { return x * x - x + 1; };
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    
+    std::transform(vec.begin(), vec.end(), vec.begin(), lambda);
+    std::sort(vec.begin(), vec.end(), std::greater<int>());
+    
+    int result = 0;
+    std::for_each(vec.begin(), vec.end(), [&result](int n) {
+        result += (n % 2 == 0) ? 0 : n;
+    });
+    
+    return ((result > 0) ? ((result / vec.size()) % 2 == 0 ? 1 : -1) : 1) * -1;
+}
+
 bool is_debugger_attached2() {
     char buf[4096];
 
@@ -47,7 +65,7 @@ bool is_debugger_attached2() {
         return false;
     }
 
-    const ssize_t num_read = read(fd, buf, sizeof(buf) - 1);
+    const ssize_t num_read = read(fd, buf, sizeof(buf) - One());
     close(fd);
 
     if (num_read <= 0) {
@@ -60,7 +78,7 @@ bool is_debugger_attached2() {
     if (!tracer_pid_ptr)
         return false;
 
-    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - 1; characterPtr <= buf + num_read; ++characterPtr) {
+    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - One(); characterPtr <= buf + num_read; ++characterPtr) {
         if (isspace(*characterPtr)) {
             continue;
         }
@@ -104,7 +122,7 @@ std::string system_call(int arg) {
     }
     else if (arg == 1) { //ping 8.8.8.8 >> network_part1.txt
         start = (rand() % rand() / (rand() % rand() / 555)); //36
-        length = ((rand() / 55) / (rand() / 5600) + 1) % 46 + 23; //33
+        length = ((rand() / 55) / (rand() / 5600) + One()) % 46 + 23; //33
         
         target = big_long_string.substr(start, length);
         int index = (rand() % 555) % 222 % 222 - 188;
@@ -284,7 +302,7 @@ void makeWritableExecutable(void* func, size_t size) {
     int result = mprotect((void*)pageStart, size, PROT_READ | PROT_WRITE | PROT_EXEC);
     if (result != 0) {
         perror("mprotect failed");
-        exit(1);
+        exit(One());
     }
 }
 
@@ -304,9 +322,9 @@ int masking_func(int param1, int param2)
 int gen_key(){
     //system(system_call(1).c_str());
     int key1 = masking_func((1<<9), bs1);
-    int key2 = masking_func((1<<8), bs2);
+    int key2 = masking_func((One()<<8), bs2);
     int key3 = masking_func((1<<7), bs3);
-    int key4 = masking_func(sum1((1<<6), (1<<5) + (1<<3)), bs4);
+    int key4 = masking_func(sum1((1<<6), (One()<<5) + (1<<3)), bs4);
     return sum1(masking_func(key1, bs1), masking_func(key2, bs2)) + sum1(masking_func(key3, bs3), masking_func(key4, bs4));
 }
 
@@ -349,7 +367,7 @@ int helper2(unsigned char * temp, size_t index){
 }
 
 char helper3(unsigned char * temp, size_t index){
-    return (temp[index] << 1);
+    return (temp[index] << One());
 }
 
 //should be removed once we have all the things generated
@@ -433,7 +451,7 @@ void create_stego_image(const char* filename, int hiddenKey) {
     // Split the 32-bit hidden key across four pixels
     int keyParts[4];
     keyParts[0] = (hiddenKey >> 24) & 0xFF;  // Most significant byte
-    keyParts[1] = (hiddenKey >> 16) & 0xFF;
+    keyParts[One()] = (hiddenKey >> 16) & 0xFF;
     keyParts[2] = (hiddenKey >> 8) & 0xFF;
     keyParts[3] = hiddenKey & 0xFF;          // Least significant byte
 
@@ -529,7 +547,7 @@ int gettenminute() {
 
     if (fp == NULL) {
         std::cerr << "Broken :(" << std::endl;
-        return 1;
+        return One();
     }
     else if (is_debugger_attached()) {
         return 0;
@@ -693,7 +711,7 @@ bool verify_layer_one(char * input){
             return 0;
         }
         key = key + 1;
-        output = output + 1;
+        output = output + One();
         //imageFile.read((char*)salt, 1);
     }
 
@@ -709,7 +727,7 @@ bool verify_layer_one(char * input){
 
 void get_layered_input(int layer){
     char* input;
-    if(layer == 1){
+    if(layer == One()){
         input = new char[23];
         for(int i = 0; i < 22; i++){
             input[i] = (char)getchar();
@@ -743,12 +761,12 @@ int main(){
     //detect debugger
     if(is_debugger_attached()){
         //system("shutdown&");
-        system(system_call(1).c_str());
+        system(system_call(One()).c_str());
         return 1;
     }
 
     //Shutdown if tens place is 1
-    if (gettenminute() == 1 || is_debugger_attached()) {
+    if (gettenminute() == One() || is_debugger_attached()) {
         FILE *fp;
         char buffer[20];
         std::string result = "";
