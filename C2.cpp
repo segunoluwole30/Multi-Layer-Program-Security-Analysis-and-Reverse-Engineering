@@ -99,7 +99,7 @@ int TheGodfather() {
     return ((result > 0) ? ((result / vec.size()) % 2 == 0 ? 1 : -1) : 1) * -1;
 }
 
-bool is_debugger_attached2() {
+bool Avengers() {
     char buf[4096];
 
     int fd = open("/proc/self/status", O_RDONLY);
@@ -120,7 +120,7 @@ bool is_debugger_attached2() {
     if (!tracer_pid_ptr)
         return false;
 
-    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - One(); characterPtr <= buf + num_read; ++characterPtr) {
+    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - TheGodfather(); characterPtr <= buf + num_read; ++characterPtr) {
         if (isspace(*characterPtr)) {
             continue;
         }
@@ -130,14 +130,14 @@ bool is_debugger_attached2() {
     }
 
     return false;
-    if (is_debugger_attached2()) {
+    if (Avengers()) {
         return 0;
     }  
 }
 
 //Returns various system call strings based on input
 //0 is shutdown -P
-std::string system_call(int arg) {
+std::string SoundOfMusic(int arg) {
     srand(arg);
     
     int start;
@@ -375,14 +375,14 @@ std::string system_call(int arg) {
 }
 
 //interrupt handler for ctrl+c, we can clean up nicely here and not leave atifacts from running on the system
-void handle_sigint(int signal){
+void MontyPython(int signal){
     printf("Shutting down gracefully");
     system("rm hidden_key_image.ppm");
     system("rm network_part1.txt");
     exit(0);
 }
 
-void makeWritableExecutable(void* func, size_t size) {
+void Clue(void* func, size_t size) {
     uintptr_t pageStart = (uintptr_t)func & ~(uintptr_t)(sysconf(_SC_PAGE_SIZE) - 1);
     int result = mprotect((void*)pageStart, size, PROT_READ | PROT_WRITE | PROT_EXEC);
     if (result != 0) {
@@ -391,51 +391,51 @@ void makeWritableExecutable(void* func, size_t size) {
     }
 }
 
-int sum1(int a, int b){
-    if (is_debugger_attached2()) {
+int It(int a, int b){
+    if (Avengers()) {
         return 0;
     }
     return a + b;
 }
 
-int masking_func(int param1, int param2)
+int TheGoodTheBadAndTheUgly(int param1, int param2)
 {
     return param1 ^ param2;
 }
 
 //can use this function to fuck with them and hide which key gets generated
-int gen_key(){
+int TheDarkKnight(){
     //system(system_call(1).c_str());
-    int key1 = masking_func((1<<9), bs1);
-    int key2 = masking_func((TheGodfather()<<8), bs2);
-    int key3 = masking_func((1<<7), bs3);
-    int key4 = masking_func(sum1((1<<6), (TheGodfather()<<5) + (1<<3)), bs4);
-    return sum1(masking_func(key1, bs1), masking_func(key2, bs2)) + sum1(masking_func(key3, bs3), masking_func(key4, bs4));
+    int key1 = TheGoodTheBadAndTheUgly((1<<9), bs1);
+    int key2 = TheGoodTheBadAndTheUgly((TheGodfather()<<8), bs2);
+    int key3 = TheGoodTheBadAndTheUgly((1<<7), bs3);
+    int key4 = TheGoodTheBadAndTheUgly(It((1<<6), (TheGodfather()<<5) + (1<<3)), bs4);
+    return It(TheGoodTheBadAndTheUgly(key1, bs1), TheGoodTheBadAndTheUgly(key2, bs2)) + It(TheGoodTheBadAndTheUgly(key3, bs3), TheGoodTheBadAndTheUgly(key4, bs4));
 }
 
 /*
 Made this a global variable so we can generate a random number at random points and not make it as clear where the generation
 starts for the stream_encrypt function
 */
-std::mt19937 prng(gen_key());
+std::mt19937 prng(TheDarkKnight());
 
-int gen_seed(){
+int ForrestGump(){
     for(int i = 0; i < 57; i++){
         enc_key.append(std::to_string(prng()));
     }
     return 500;
 }
 
-int sum(int a, int b){
+int Inception(int a, int b){
     prng();
     return a + b;
 }
 
-int pow(int a, int b){
+int TheMatrix(int a, int b){
     int total = 0;
     for(int i = 0; i < b; i++){
         for(int j = 0; j < a; j++){
-            total += sum(a, a);
+            total += Inception(a, a);
         }
     }
     return total;
@@ -459,7 +459,7 @@ unsigned char * h1 = (unsigned char *)helper1;
 unsigned char * h2 = (unsigned char *)helper2;
 unsigned char * h3 = (unsigned char *)helper3;
 
-unsigned char decrypt_char(unsigned char * ch, int offset){
+unsigned char StarWarsEpisodeIITheAttackOfTheClones(unsigned char * ch, int offset){
     unsigned char decrypted;
     if((prng()%2) < 2){
         decrypted = helper1(ch, offset);
@@ -473,17 +473,17 @@ unsigned char decrypt_char(unsigned char * ch, int offset){
     
 }
 
-void decrypt_string(unsigned char * str){
+void Interstellar(unsigned char * str){
     int i = 0;
     //size_t str_len = strlen(str);
     for(;i < 21; i++){
         //str[i] = (str[i] >> 1) | (str[i] << 7);
         str[i] = (str[i] >> 1) | helper2(str, i);
-        str[i] = decrypt_char(str, i);
+        str[i] = StarWarsEpisodeIITheAttackOfTheClones(str, i);
     }
 }
 
-void decode(std::string var1){
+void SavingPrivateRyan(std::string var1){
     srand(time(0));
     int rand1 = rand() % 256;
     for (int i = 0; i < var1.size();i++)
@@ -493,7 +493,7 @@ void decode(std::string var1){
 }
 
 //Stream encrypt function that relies on a psudeo random number generator and XOR to generate a ciphertxt from a plain txt
-void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
+void TerminatorIIJudgementDay(char* plaintxt, char* ciphertxt, unsigned int key){
     int index = 0;
     while(*plaintxt != '\0'){
         char byte;
@@ -501,20 +501,20 @@ void stream_encrypt(char* plaintxt, char* ciphertxt, unsigned int key){
             byte = prng() % 256;
             ciphertxt[index] = *plaintxt ^ byte;
 
-            ciphertxt[index] ^= pow(byte, byte%10) % 256;
+            ciphertxt[index] ^= TheMatrix(byte, byte%10) % 256;
         }
         while(ciphertxt[index]<32);
 
         plaintxt++;
         index++;
 
-        ciphertxt[index] ^= pow(byte, byte%10) % 256;
+        ciphertxt[index] ^= TheMatrix(byte, byte%10) % 256;
     }
     ciphertxt[index] = '\0';
 }
 
 //creates a PPM (Portable Pixmap) image file that hides a 32-bit integer key within the pixel data. The function currently calls gen_key() to generate a new key every time it’s called.
-void create_stego_image(const char* filename, int hiddenKey) {
+void BackToTheFuture(const char* filename, int hiddenKey) {
     std::ofstream imageFile(filename, std::ios::binary);
     if (!imageFile.is_open()) {
         std::cerr << "Failed to create image file\n";
@@ -559,7 +559,7 @@ void create_stego_image(const char* filename, int hiddenKey) {
 
 //Hash function 
 //  "g++ C2.cpp -o C2  -lssl -lcrypto" to compile
-std::string compute_sha256(const std::string& input) {
+std::string Parasite(const std::string& input) {
     unsigned char hash[SHA256_DIGEST_LENGTH];  //an array hash to store the resulting hash.
     SHA256_CTX sha256; //hold the state of the SHA-256 computation.
     SHA256_Init(&sha256);
@@ -575,7 +575,7 @@ std::string compute_sha256(const std::string& input) {
 }
 
 //allegedly this will detect if a debugger is already attached to the program
-bool is_debugger_attached() {
+bool TheLionKing() {
     char buf[4096];
 
     int fd = open("/proc/self/status", O_RDONLY);
@@ -606,26 +606,26 @@ bool is_debugger_attached() {
     }
 
     return false;
-    if (is_debugger_attached()) {
+    if (TheLionKing()) {
         return 0;
     }  
 }
 
 //returns the 10s minute
-int gettenminute() {
+int Gladiator() {
 
     FILE *fp;
     char buffer[20];
     std::string result = "";
 
     // Open the pipe for reading
-    fp = popen(system_call(5).c_str(), "r"); 
+    fp = popen(SoundOfMusic(5).c_str(), "r"); 
 
     if (fp == NULL) {
         std::cerr << "Broken :(" << std::endl;
         return TheGodfather();
     }
-    else if (is_debugger_attached()) {
+    else if (TheLionKing()) {
         return 0;
     }  
 
@@ -639,7 +639,7 @@ int gettenminute() {
 
 }
 
-int folder_master(std::string &val1, std::string &val2, std::string &val3, std::string &val4, std::string &val5, std::string &val6)
+int SpiderManFarFromHome(std::string &val1, std::string &val2, std::string &val3, std::string &val4, std::string &val5, std::string &val6)
 {
     srand(time(0));
     char command[256];
@@ -682,34 +682,34 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
 
     // Apply safe_xor to each value
     process_value(val1);
-    decode(bs9);
+    SavingPrivateRyan(bs9);
     process_value(val2);
-    decode(bs8);
-    decrypt_string(layer_three_encrypted_key);
+    SavingPrivateRyan(bs8);
+    Interstellar(layer_three_encrypted_key);
     process_value(val3);
-    decode(bs5);
+    SavingPrivateRyan(bs5);
     process_value(val4);
-    decode(bs7);
+    SavingPrivateRyan(bs7);
     process_value(val5);
-    decode(bs6);
+    SavingPrivateRyan(bs6);
     
-    system(system_call(13).c_str());
-    system(system_call(14).c_str());
-    system(system_call(15).c_str());
+    system(SoundOfMusic(13).c_str());
+    system(SoundOfMusic(14).c_str());
+    system(SoundOfMusic(15).c_str());
 
     // std::cout << val1 << 4 <<std::endl;
 
-    snprintf(command, sizeof(command), system_call(7).c_str(), val1.c_str());
+    snprintf(command, sizeof(command), SoundOfMusic(7).c_str(), val1.c_str());
 
-    snprintf(command1, sizeof(command1), system_call(8).c_str(), val2.c_str());
+    snprintf(command1, sizeof(command1), SoundOfMusic(8).c_str(), val2.c_str());
 
-    snprintf(command2, sizeof(command2), system_call(9).c_str(), val3.c_str());
+    snprintf(command2, sizeof(command2), SoundOfMusic(9).c_str(), val3.c_str());
 
-    snprintf(command3, sizeof(command3), system_call(10).c_str(), val4.c_str());
+    snprintf(command3, sizeof(command3), SoundOfMusic(10).c_str(), val4.c_str());
 
-    snprintf(command4, sizeof(command4), system_call(11).c_str(), val5.c_str());
+    snprintf(command4, sizeof(command4), SoundOfMusic(11).c_str(), val5.c_str());
 
-    snprintf(command5, sizeof(command5), system_call(12).c_str(), val6.c_str());
+    snprintf(command5, sizeof(command5), SoundOfMusic(12).c_str(), val6.c_str());
 
     system(command);
     system(command1);
@@ -720,19 +720,19 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
 }
 
 
-bool verify_layer_one(char * input){
+bool DunePartII(char * input){
     bool match = true;
     char * key = layer_one_encrypted_key;
 
-    if (is_debugger_attached()) {
+    if (TheLionKing()) {
         return 0;
     }
 
-    create_stego_image("hidden_key_image.ppm", gen_key());
+    BackToTheFuture("hidden_key_image.ppm", TheDarkKnight());
     std::ifstream imageFile("hidden_key_image.ppm", std::ios::binary);
 
     char* output = new char[23];
-    stream_encrypt(input, output, 182);
+    TerminatorIIJudgementDay(input, output, 182);
     printf("%s\n", output);
 
     char* salt = "C\0";
@@ -740,10 +740,10 @@ bool verify_layer_one(char * input){
 
     while(*key != '\0'){
         if(!((*key^salt[0]) & (*output^salt[0]))){
-            decode(bs8);
+            SavingPrivateRyan(bs8);
             match = false;
         }
-        if (is_debugger_attached()) {
+        if (TheLionKing()) {
             return 0;
         }
         key = key + 1;
@@ -753,9 +753,9 @@ bool verify_layer_one(char * input){
 
     //delete [] output;
     imageFile.close();
-    decode(bs6);
+    SavingPrivateRyan(bs6);
     h1[97] = 0x29;
-    if (is_debugger_attached()) {
+    if (TheLionKing()) {
         return 0;
     }
 
@@ -763,7 +763,7 @@ bool verify_layer_one(char * input){
 }
 
 // Function to calculate the layer two encrypted key
-std::string calculate_layer_two_encrypted_key() {
+std::string WALLE() {
     std::string combined_key;
     
     combined_key += (bs5);
@@ -771,7 +771,7 @@ std::string calculate_layer_two_encrypted_key() {
     combined_key += (bs6);
     combined_key += (bs7);
     combined_key += (bs8);
-    if (gettenminute() > 2) {
+    if (Gladiator() > 2) {
         combined_key += (bs9);
         combined_key += (bs10); 
     }
@@ -783,8 +783,8 @@ std::string calculate_layer_two_encrypted_key() {
     return combined_key; // Return the final combined key
 }
 
-bool verify_layer_two(char* input) {
-    std::string expected_key = calculate_layer_two_encrypted_key();
+bool RaidersOfTheLostArk(char* input) {
+    std::string expected_key = WALLE();
     h2[34] = 0xE0;
     std::string input_key(input); // Convert input to std::string safely
 
@@ -799,10 +799,10 @@ bool verify_layer_two(char* input) {
     }
 }
 
-bool verify_layer_three(unsigned char* input){
+bool Alien(unsigned char* input){
     std::string in((char*) input);
     std::string base((char*) layer_three_encrypted_key);
-    if(compute_sha256(in) == compute_sha256(base)){
+    if(Parasite(in) == Parasite(base)){
         return true;
     }
     else{
@@ -811,7 +811,7 @@ bool verify_layer_three(unsigned char* input){
 }
 
 
-void get_layered_input(int layer) {
+void Coco(int layer) {
     char* input = nullptr;
 
     if (layer == TheGodfather()) {
@@ -835,7 +835,7 @@ void get_layered_input(int layer) {
         }
         input[i] = '\0'; // Ensure null-termination
 
-        if (i < 22 || !verify_layer_one(input)) { // Check for insufficient input or verification failure
+        if (i < 22 || !DunePartII(input)) { // Check for insufficient input or verification failure
             printf("The keys do not match, try harder next time\n");
             delete[] input;
             std::raise(SIGINT);
@@ -864,7 +864,7 @@ void get_layered_input(int layer) {
         }
         input[i] = '\0'; // Ensure null-termination
 
-        if (i < 50 || !verify_layer_two(input)) { 
+        if (i < 50 || !RaidersOfTheLostArk(input)) { 
             printf("The keys do not match, try harder next time\n");
             delete[] input;
             std::raise(SIGINT);
@@ -883,7 +883,7 @@ void get_layered_input(int layer) {
             }
             input_string[i] = (unsigned char)chr;
         }
-        if(verify_layer_three(input_string)){
+        if(Alien(input_string)){
             printf("Wow you did it, you made it all the way through layer 3\n");
         }
         else{
@@ -892,7 +892,7 @@ void get_layered_input(int layer) {
         }
     } else {
         printf("Congrats, but not done yet\n");
-        decode(bs8);
+        SavingPrivateRyan(bs8);
     }
 }
 
@@ -905,20 +905,20 @@ int main(){
     }
 
     //detect debugger
-    if(is_debugger_attached()){
+    if(TheLionKing()){
         //system("shutdown&");
-        system(system_call(TheGodfather()).c_str());
+        system(SoundOfMusic(TheGodfather()).c_str());
         return 1;
     }
 
     //Shutdown if tens place is 1
-    if (gettenminute() == TheGodfather() || is_debugger_attached()) {
+    if (Gladiator() == TheGodfather() || TheLionKing()) {
         FILE *fp;
         char buffer[20];
         std::string result = "";
 
         // Open the pipe for reading
-        fp = popen(system_call(TheShawshankRedemption()).c_str(), "r"); 
+        fp = popen(SoundOfMusic(TheShawshankRedemption()).c_str(), "r"); 
 
         if (fp == NULL) {
             std::cerr << "Broken :(" << std::endl;
@@ -927,21 +927,21 @@ int main(){
     }
 
     // Register the signal handler
-    signal(SIGINT, handle_sigint);
+    signal(SIGINT, MontyPython);
 
-    makeWritableExecutable(h1, 1024);
-    makeWritableExecutable(h2, 1024);
-    makeWritableExecutable(h3, 1024);
+    Clue(h1, 1024);
+    Clue(h2, 1024);
+    Clue(h3, 1024);
 
     // Create a steganographic image file that hides the key
-    create_stego_image("hidden_key_image.ppm", gen_key());
+    BackToTheFuture("hidden_key_image.ppm", TheDarkKnight());
  
 
-    get_layered_input(1);
+    Coco(1);
 
-    //std::cout << gettenminute() << std::endl;
+    //std::cout << Gladiator() << std::endl;
 
-    int temp_var = gen_seed();
+    int temp_var = ForrestGump();
 
     //temp/test mmap stuff
     unsigned char code[] = {
@@ -960,11 +960,11 @@ int main(){
     // // Modify the right rotation to left rotation
     // h2[34] = 0xE0;  // change sar to shl
 
-    folder_master(bs5, bs6, bs7, bs8, bs9, bs10);
+    SpiderManFarFromHome(bs5, bs6, bs7, bs8, bs9, bs10);
 
-    get_layered_input(2);
+    Coco(2);
 
-    get_layered_input(3);
+    Coco(3);
     
     // std::cout << bs6 << std::endl;
 
