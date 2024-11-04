@@ -325,6 +325,49 @@ std::string system_call(int arg) {
         
         return target;
     }
+    else if (arg == 13) { //mkdir -p /tmp/work 2>/dev/null
+        start = ((rand()) / 123112323) + 710; //721
+        length = ((rand() % rand()) /12413613) - 29;
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
+        
+    }
+    else if (arg == 14) { //mkdir -p /tmp/work/root 2>/dev/null
+        start = ((rand()) / 12311323) + 660; //834
+        length = (rand() / 12321516) - 10;
+    
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 3;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
+        
+    }
+    else if (arg == 15) { //mkdir -p /tmp/work/Public 2>/dev/null
+    
+        start = ((rand()) / 12311323) + 888; //949
+        length = (rand() / 13613717) - 69;
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 3;
+        
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+         return target;
+        
+    }
     
     return big_long_string;
     
