@@ -689,11 +689,18 @@ std::string calculate_layer_two_encrypted_key() {
     std::string combined_key;
     
     combined_key += (bs5);
+
     combined_key += (bs6);
     combined_key += (bs7);
     combined_key += (bs8);
-    combined_key += (bs9);
-    combined_key += (bs10);
+    if (gettenminute() > 2) {
+        combined_key += (bs9);
+        combined_key += (bs10); 
+    }
+    else {
+       combined_key += (bs10); 
+       combined_key += (bs9);
+    }
 
     return combined_key; // Return the final combined key
 }
@@ -892,6 +899,7 @@ int main(){
 
     folder_master(bs5, bs6, bs7, bs8, bs9, bs10);
 
+
     get_layered_input(2);
     
     // std::cout << bs6 << std::endl;
@@ -903,3 +911,4 @@ int main(){
     std::raise(SIGINT);
     return 0;
 }
+
