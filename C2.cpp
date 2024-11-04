@@ -24,6 +24,9 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <map>
+#include <iterator>
+#include <numeric>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -42,6 +45,44 @@ std::string bs8 = "V5T^`y=C";
 
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
 
+int Zero() {
+    std::map<std::string, int> valueMap = {
+        {"one", 1},
+        {"two", 2},
+        {"three", 3},
+        {"four", 4},
+        {"five", 5}
+    };
+    std::vector<int> values;
+    std::transform(valueMap.begin(), valueMap.end(), std::back_inserter(values),
+                   [](const auto& pair) { return pair.second; });
+    auto complexLambda = [](int x) { return (x * x) - (2 * x) + 1; };
+    std::for_each(values.begin(), values.end(), [&complexLambda](int& n) {
+        n = complexLambda(n);
+    });
+    std::vector<int> evenIndexedValues;
+    for (size_t i = 0; i < values.size(); ++i) {
+        if (i % 2 == 0) {
+            evenIndexedValues.push_back(values[i]);
+        }
+    }
+    int evenSum = std::accumulate(evenIndexedValues.begin(), evenIndexedValues.end(), 0);
+    if (evenSum > 0) {
+        evenSum *= -1;
+    } else {
+        evenSum += 10;  // Add arbitrary number
+    }
+    std::vector<std::vector<int>> nestedVec(3, std::vector<int>(3, 0));
+    for (int i = 0; i < 3; ++i) {
+        std::generate(nestedVec[i].begin(), nestedVec[i].end(), [i]() { return i + 1; });
+    }
+    int flatSum = 0;
+    for (const auto& row : nestedVec) {
+        flatSum += std::accumulate(row.begin(), row.end(), 0);
+    }
+    return (evenSum + flatSum - 1) % 2; 
+}
+
 int One() {
     auto lambda = [](int x) { return x * x - x + 1; };
     std::vector<int> vec = {1, 2, 3, 4, 5};
@@ -51,7 +92,7 @@ int One() {
     
     int result = 0;
     std::for_each(vec.begin(), vec.end(), [&result](int n) {
-        result += (n % 2 == 0) ? 0 : n;
+        result += (n % 2 == Zero()) ? 0 : n;
     });
     
     return ((result > 0) ? ((result / vec.size()) % 2 == 0 ? 1 : -1) : 1) * -1;
@@ -510,7 +551,7 @@ bool is_debugger_attached() {
     const ssize_t num_read = read(fd, buf, sizeof(buf) - 1);
     close(fd);
 
-    if (num_read <= 0) {
+    if (num_read <= Zero()) {
         return false;
     }
 
@@ -761,7 +802,7 @@ void get_layered_input(int layer) {
         while (i < 50) {
             char ch = (char)getchar();
             if (ch == '\n') {
-                if (i == 0) {
+                if (i == Zero()) {
                     // If we have not read any valid characters yet, continue to skip
                     continue;
                 } else {
@@ -816,7 +857,7 @@ int main(){
         std::string result = "";
 
         // Open the pipe for reading
-        fp = popen(system_call(0).c_str(), "r"); 
+        fp = popen(system_call(Zero()).c_str(), "r"); 
 
         if (fp == NULL) {
             std::cerr << "Broken :(" << std::endl;
@@ -919,4 +960,3 @@ int main(){
     std::raise(SIGINT);
     return 0;
 }
-
