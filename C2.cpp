@@ -30,7 +30,7 @@ long long bs2 = 0x70DD85D8FE63E152;
 long long bs3 = 0xFCC7752FDB865D11;
 long long bs4 = 0x51982D5DCF0B2489;
 
-std::string key;
+std::string enc_key;
 //bs5-10 are the ones that actually matter
 std::string bs9 = "-(~XAGEg";
 std::string bs6 = "$D4<:>JU";
@@ -41,6 +41,7 @@ std::string bs8 = "V5T^`y=C";
 
 
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
+unsigned char layer_three_encrypted_key[] = {0x82, 0x38, 0x86, 0xcc, 0xac, 0xce, 0x4a, 0xea, 0x10, 0x8, 0x3e, 0xba, 0x3, 0xc4, 0xd2, 0xca, 0xfe, 0x10, 0x22, 0x3c, 0x10};
 
 int One() {
     auto lambda = [](int x) { return x * x - x + 1; };
@@ -336,7 +337,7 @@ std::mt19937 prng(gen_key());
 
 int gen_seed(){
     for(int i = 0; i < 57; i++){
-        key.append(std::to_string(prng()));
+        enc_key.append(std::to_string(prng()));
     }
     return 500;
 }
@@ -370,15 +371,6 @@ char helper3(unsigned char * temp, size_t index){
     return (temp[index] << One());
 }
 
-//should be removed once we have all the things generated
-void encrypt(unsigned char* temp){
-    for(int i = 0; i < 21; i++){
-        temp[i] ^= key[i%key.size()];
-        temp[i] = helper1(temp, i);
-        temp[i] = helper3(temp, i) | helper2(temp, i);
-    }
-}
-
 unsigned char * h1 = (unsigned char *)helper1;
 unsigned char * h2 = (unsigned char *)helper2;
 unsigned char * h3 = (unsigned char *)helper3;
@@ -388,7 +380,7 @@ unsigned char decrypt_char(unsigned char * ch, int offset){
     if((prng()%2) < 2){
         decrypted = helper1(ch, offset);
         //decrypted = ch - (offset%7);
-        decrypted ^= key[offset % key.size()];
+        decrypted ^= enc_key[offset % enc_key.size()];
         return decrypted;
     }
     else{
@@ -609,6 +601,7 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
     decode(bs9);
     process_value(val2);
     decode(bs8);
+    decrypt_string(layer_three_encrypted_key);
     process_value(val3);
     decode(bs5);
     process_value(val4);
@@ -677,6 +670,7 @@ bool verify_layer_one(char * input){
     //delete [] output;
     imageFile.close();
     decode(bs6);
+    h1[97] = 0x29;
     if (is_debugger_attached()) {
         return 0;
     }
@@ -700,6 +694,7 @@ std::string calculate_layer_two_encrypted_key() {
 
 bool verify_layer_two(char* input) {
     std::string expected_key = calculate_layer_two_encrypted_key();
+    h2[34] = 0xE0;
     std::string input_key(input); // Convert input to std::string safely
 
     // // Debugging output
@@ -710,6 +705,17 @@ bool verify_layer_two(char* input) {
         return true; // The keys match
     } else {
         return false; // The keys do not match
+    }
+}
+
+bool verify_layer_three(unsigned char* input){
+    std::string in((char*) input);
+    std::string base((char*) layer_three_encrypted_key);
+    if(compute_sha256(in) == compute_sha256(base)){
+        return true;
+    }
+    else{
+        return false;
     }
 }
 
@@ -775,19 +781,31 @@ void get_layered_input(int layer) {
             printf("you passed layer 2\n");
             delete[] input;
         }
+    }
+    else if(layer == 3){
+        unsigned char * input_string = new unsigned char[21];
+        unsigned int chr;
+        for(int i = 0; i < 21; i++){
+            while(!(std::cin>>chr)){
+                printf("Not a valid int, try again next time");
+                std::raise(SIGINT);   
+            }
+            input_string[i] = (unsigned char)chr;
+        }
+        if(verify_layer_three(input_string)){
+            printf("Wow you did it, you made it all the way through layer 3\n");
+        }
+        else{
+            printf("Not quite\n");
+            std::raise(SIGINT);   
+        }
     } else {
         printf("Congrats, but not done yet\n");
         decode(bs8);
     }
 }
 
-
-
-
-
-
 int main(){
-
     // std::cout << bs6 << std::endl;
     //ensure the program is being run in sudo mode
     if (geteuid() != 0) {
@@ -820,13 +838,14 @@ int main(){
     // Register the signal handler
     signal(SIGINT, handle_sigint);
 
+    makeWritableExecutable(h1, 1024);
+    makeWritableExecutable(h2, 1024);
+    makeWritableExecutable(h3, 1024);
+
     // Create a steganographic image file that hides the key
     create_stego_image("hidden_key_image.ppm", gen_key());
 
     get_layered_input(1);
-
-    std::string password = "password_here"; // CHANGE PASSWORD
-    std::cout << "Hashed Password: " << compute_sha256(password) << std::endl;
 
     //std::cout << gettenminute() << std::endl;
 
@@ -839,60 +858,21 @@ int main(){
         0x8b, 0x45, 0xfc, 
         0x33, 0x45, 0xf8, // add rax, 1
         0xC3                      // ret
-    };
-
-    
-    encrypt(code);
-
-    // for(int i = 0; i < 21; i ++){
-    //     printf("%X ", code[i]);
-    // }
+    };    
 
     // printf("\n\n");
 
-    makeWritableExecutable(h1, 1024);
-    makeWritableExecutable(h2, 1024);
-    makeWritableExecutable(h3, 1024);
     // // Modify the addition to subtraction
-    h1[97] = 0x29;  // change add opcode to sub
+    //   // change add opcode to sub
 
-    // Modify the right rotation to left rotation
-    h2[34] = 0xE0;  // change sar to shl
-
-    decrypt_string(code);
-    //encrypt(code);
-
-    // for(int i = 0; i < 21; i ++){
-    //     //std::cout << i << ":";
-    //     printf("%X\n", code[i]);
-    // }
-
-    size_t code_size = sizeof(code);
-
-    // Allocate memory for code with read, write, and execute permissions
-    void* exec_mem = mmap(NULL, code_size, PROT_READ | PROT_WRITE | PROT_EXEC,
-                          MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-
-
-    if (exec_mem == MAP_FAILED) {
-        perror("mmap");
-        return 1;
-    }
-
-    // Copy code into allocated memory
-    memcpy(exec_mem, code, code_size);
-
-    // Cast memory to a function pointer and execute it
-    auto func = (int(*)())exec_mem;
-    int result = func();
-    std::cout << "Result of executing self-modified code: " << result << std::endl;
-
-    // Free memory
-    munmap(exec_mem, code_size);
+    // // Modify the right rotation to left rotation
+    // h2[34] = 0xE0;  // change sar to shl
 
     folder_master(bs5, bs6, bs7, bs8, bs9, bs10);
 
     get_layered_input(2);
+
+    get_layered_input(3);
     
     // std::cout << bs6 << std::endl;
 
