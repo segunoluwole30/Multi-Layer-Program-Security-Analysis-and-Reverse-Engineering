@@ -440,14 +440,36 @@ std::string compute_sha256(const std::string& input) {
 
 //allegedly this will detect if a debugger is already attached to the program
 bool is_debugger_attached() {
-    // Attempt to attach to the current process
-    if (ptrace(PTRACE_ATTACH, getppid(), 1, 0) == -1) {
-        // If we can't attach, a debugger is likely present
-        if (errno == EPERM) {
-            return true; // Debugger is attached
+    char buf[4096];
+
+    int fd = open("/proc/self/status", O_RDONLY);
+    if (fd == -1) {
+        return false;
+    }
+
+    const ssize_t num_read = read(fd, buf, sizeof(buf) - 1);
+    close(fd);
+
+    if (num_read <= 0) {
+        return false;
+    }
+
+    buf[num_read] = '\0';
+    const char tracerPidString[] = "TracerPid:";
+    const char* tracer_pid_ptr = strstr(buf, tracerPidString);
+    if (!tracer_pid_ptr)
+        return false;
+
+    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - 1; characterPtr <= buf + num_read; ++characterPtr) {
+        if (isspace(*characterPtr)) {
+            continue;
+        }
+        else {
+            return isdigit(*characterPtr) != 0 && *characterPtr != '0';
         }
     }
-    return false; // No debugger detected
+
+    return false;
 }
 
 //returns the 10s minute
