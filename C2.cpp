@@ -800,6 +800,7 @@ bool RaidersOfTheLostArk(char* input) {
 }
 
 bool Alien(unsigned char* input){
+    input[21] = '\0';
     std::string in((char*) input);
     std::string base((char*) layer_three_encrypted_key);
     if(Parasite(in) == Parasite(base)){
@@ -874,7 +875,7 @@ void Coco(int layer) {
         }
     }
     else if(layer == 3){
-        unsigned char * input_string = new unsigned char[21];
+        unsigned char * input_string = new unsigned char[22];
         unsigned int chr;
         for(int i = 0; i < 21; i++){
             while(!(std::cin>>chr)){
@@ -883,6 +884,7 @@ void Coco(int layer) {
             }
             input_string[i] = (unsigned char)chr;
         }
+        input_string[21] = '\0';
         if(Alien(input_string)){
             printf("Wow you did it, you made it all the way through layer 3\n");
         }
