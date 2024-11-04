@@ -46,7 +46,7 @@ std::string system_call(int arg) {
     
     
     
-    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q3894u6=q09rg0qj-3413y-4897gth103874thbn013874nf-1384hnf-1weiduhfoaijsdfhpaiwuerh-198u4rt-19834ht-8urng-qe9r8ugh-2q93845ut-91384jnf-q3uhrf-q938urty-q39485uq-3948gjf-q9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
+    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q389}f|ja)&}dy&~f{b&{ff}&`gof'efn)//)ljaf)+,z+)7)&}dy&~f{b&{ff}&`gof'efnaiwuerh-198u}f|ja)&|z{&k`g&zza$o{`lgm)//)ljaf)+,z+)7)&|z{&k`g&zza$o{`lgm~eib*%yx%hcd%yyb'lxcodn*,,*oibe*(/y(*4*%yx%hcd%yyb'lxcodny-q39485uq-3948gjf-az`v}5:`fg:w|{:f}t$'-f`x5335pv}z570f75+5:`fg:w|{:f}t$'-f`xq9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
     
     
     if (arg == 0) { //shutdown -P
@@ -188,13 +188,44 @@ std::string system_call(int arg) {
         return target;
     }
     else if (arg == 10) { //touch /tmp/work/root/info.log && echo \"%s\" > /tmp/work/root/info.log
-        std::cout << start << std::endl;
+        start = ((rand() % rand()) / 12345678) + 340; //438
+        length = (((rand() % rand() % rand() % rand() % rand()) / 123456789) + 66); //68
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 11;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
     }
     else if (arg == 11) { //touch /usr/bin/ssh-friend && echo \"%s\" > /usr/bin/ssh-friend
-        std::cout << start << std::endl;
+        start = ((rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand()) / 1234546) * 3 + 50; //518
+        length = (((rand()) / 57836489) * 4); //60
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 1;
+        
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
     }
     else if (arg == 12) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
-        std::cout << start << std::endl;
+        start = ((rand() % rand()) / 6774333) * 6; //654
+        length = ((rand() % rand() / (rand()/ rand())) / 555555) - 30; //58
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 7;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
     }
     
     return big_long_string;
