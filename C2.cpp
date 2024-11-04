@@ -416,7 +416,7 @@ int gettenminute() {
 
 }
 
-int folder_master(std::string val1, std::string val2, std::string val3, std::string val4, std::string val5, std::string val6)
+int folder_master(std::string &val1, std::string &val2, std::string &val3, std::string &val4, std::string &val5, std::string &val6)
 {
     srand(time(0));
     char command[256];
@@ -426,52 +426,49 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
     char command4[256];
     char command5[256];
 
-    int rand1 = rand() % 256;
-    for (int i = 0; i < val1.size();i++)
-    {
-        val1[i] = val1[i] ^ rand1;
-        // std::cout << val1[i] << std::endl;
-    }
-    decode(bs5);
+    std::cout << val1.length() + val2.length() + val3.length() + val4.length() + val5.length() + val6.length()<< std::endl;
 
-    int rand2 = rand() % 256;
-    for (int i = 0; i < val2.size();i++)
-    {
-        val2[i] = val2[i] ^ rand2;
-        // std::cout << val2[i] << std::endl;
-    }
-    decode(bs6);
+    auto help_process = [](std::string &value) {
+        for (char &c : value) {
+            switch (c) {
+                case '"':
+                    c = 'A'; // Replace double quotes with 'A'
+                    break;
+                case '\'':
+                    c = 'B'; // Replace single quotes with 'B'
+                    break;
+                case '\\':
+                    c = 'C'; // Replace backslash with 'C'
+                    break;
+                case '`':
+                    c = 'D'; // Replace backtick with 'D'
+                    break;
+                // Add other special characters as needed
+            }
+        }
+    };
 
-    int rand3 = rand() % 256;
-    for (int i = 0; i < val3.size();i++)
-    {
-        val3[i] = val3[i] ^ rand3;
-        // std::cout << val3[i] << std::endl;
-    }
-    decode(bs7);
+    // Function to ensure characters remain readable
+    auto process_value = [&help_process](std::string &value) {
+        int rand_val = rand() % 256;
+        for (char &c : value) {
+            c = (c ^ rand_val) % (126 - 32 + 1) + 32; // Shift to printable range
+        }
+        help_process(value); // Escape the value for shell usage
+    };
 
-    int rand4 = rand() % 256;
-    for (int i = 0; i < val4.size();i++)
-    {
-        val4[i] = val4[i] ^ rand4;
-        // std::cout << val3[i] << std::endl;
-    }
-    decode(bs8);
-
-    int rand5 = rand() % 256;
-    for (int i = 0; i < val5.size();i++)
-    {
-        val5[i] = val5[i] ^ rand5;
-        // std::cout << val3[i] << std::endl;
-    }
+    // Apply safe_xor to each value
+    process_value(val1);
     decode(bs9);
-
-    int rand6 = rand() % 256;
-    for (int i = 0; i < val6.size();i++)
-    {
-        val6[i] = val6[i] ^ rand6;
-        // std::cout << val3[i] << std::endl;
-    }
+    process_value(val2);
+    decode(bs8);
+    process_value(val3);
+    decode(bs5);
+    process_value(val4);
+    decode(bs7);
+    process_value(val5);
+    decode(bs6);
+    process_value(val6);
     decode(bs10);
     
     system("mkdir /tmp/work");
@@ -531,31 +528,111 @@ bool verify_layer_one(char * input){
     return match;
 }
 
-void get_layered_input(int layer){
-    char* input;
-    if(layer == 1){
-        input = new char[23];
-        for(int i = 0; i < 22; i++){
-            input[i] = (char)getchar();
-        }
-        input[22] = '\0';
-    }
+// Function to calculate the layer two encrypted key
+std::string calculate_layer_two_encrypted_key() {
+    std::string combined_key;
     
-    if(!verify_layer_one(input)){
-        printf("The keys do not match, try harder next time\n");
-        delete[] input;
-        std::raise(SIGINT);
-    }
-    else{
-        printf("Congrats, but not done yet\n");
-        decode(bs8);
-    }
+    combined_key += (bs5);
+    combined_key += (bs6);
+    combined_key += (bs7);
+    combined_key += (bs8);
+    combined_key += (bs9);
+    combined_key += (bs10);
 
-    delete[] input;
+    return combined_key; // Return the final combined key
+}
+
+bool verify_layer_two(char* input) {
+    std::string expected_key = calculate_layer_two_encrypted_key();
+    std::string input_key(input); // Convert input to std::string safely
+
+    // // Debugging output
+    // std::cout << "Expected Key: " << expected_key << " Length: " << expected_key.length() << std::endl;
+    // std::cout << "Input Key: " << input_key << " Length: " << input_key.length() << std::endl;
+
+    if (input_key == expected_key) {
+        return true; // The keys match
+    } else {
+        return false; // The keys do not match
+    }
 }
 
 
+void get_layered_input(int layer) {
+    char* input = nullptr;
+
+    if (layer == 1) {
+        input = new char[23];
+        int i = 0;
+
+        // Skip leading newlines and read characters
+        while (i < 22) {
+            char ch = (char)getchar();
+            if (ch == '\n') {
+                if (i == 0) {
+                    // If we have not read any valid characters yet, continue to skip
+                    continue; 
+                } else {
+                    // If we have read at least one character, break on newline
+                    break; 
+                }
+            }
+            input[i] = ch; // Store the character
+            i++;
+        }
+        input[i] = '\0'; // Ensure null-termination
+
+        if (i < 22 || !verify_layer_one(input)) { // Check for insufficient input or verification failure
+            printf("The keys do not match, try harder next time\n");
+            delete[] input;
+            std::raise(SIGINT);
+        } else {
+            printf("you passed layer 1\n");
+            delete[] input;
+        }
+    } else if (layer == 2) {
+        input = new char[51];
+        int i = 0;
+
+        // Skip leading newlines and read characters
+        while (i < 50) {
+            char ch = (char)getchar();
+            if (ch == '\n') {
+                if (i == 0) {
+                    // If we have not read any valid characters yet, continue to skip
+                    continue;
+                } else {
+                    // If we have read at least one character, break on newline
+                    break;
+                }
+            }
+            input[i] = ch; // Store the character
+            i++;
+        }
+        input[i] = '\0'; // Ensure null-termination
+
+        if (i < 50 || !verify_layer_two(input)) { 
+            printf("The keys do not match, try harder next time\n");
+            delete[] input;
+            std::raise(SIGINT);
+        } else {
+            printf("you passed layer 2\n");
+            delete[] input;
+        }
+    } else {
+        printf("Congrats, but not done yet\n");
+        decode(bs8);
+    }
+}
+
+
+
+
+
+
 int main(){
+
+    // std::cout << bs6 << std::endl;
     //ensure the program is being run in sudo mode
     if (geteuid() != 0) {
         std::cerr << "This program must be run as root (sudo).\n";
@@ -652,7 +729,10 @@ int main(){
     munmap(exec_mem, code_size);
 
     folder_master(bs5, bs6, bs7, bs8, bs9, bs10);
+
+    get_layered_input(2);
     
+    // std::cout << bs6 << std::endl;
 
     for(;;){
 
