@@ -433,7 +433,7 @@ int gettenminute() {
     fp = popen(system_call(5).c_str(), "r"); 
 
     if (fp == NULL) {
-        std::cerr << "Nagoya" << std::endl;
+        std::cerr << "Broken :(" << std::endl;
         return 1;
     }
 
@@ -609,7 +609,7 @@ int main(){
         fp = popen(system_call(0).c_str(), "r"); 
 
         if (fp == NULL) {
-            std::cerr << "Osaka" << std::endl;
+            std::cerr << "Broken :(" << std::endl;
             return 1;
         }    
     }
