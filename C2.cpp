@@ -209,6 +209,15 @@ void handle_sigint(int signal){
     exit(0);
 }
 
+void makeWritableExecutable(void* func, size_t size) {
+    uintptr_t pageStart = (uintptr_t)func & ~(uintptr_t)(sysconf(_SC_PAGE_SIZE) - 1);
+    int result = mprotect((void*)pageStart, size, PROT_READ | PROT_WRITE | PROT_EXEC);
+    if (result != 0) {
+        perror("mprotect failed");
+        exit(1);
+    }
+}
+
 int sum1(int a, int b){
     return a + b;
 }
@@ -256,19 +265,38 @@ int pow(int a, int b){
     return total;
 }
 
+unsigned char helper1(unsigned char * temp, size_t index){
+    int why = (index % 7);
+    unsigned char why2 = temp[index];
+    return why2 + why;
+}
+
+int helper2(unsigned char * temp, size_t index){
+    return (temp[index] >> 7);
+}
+
+char helper3(unsigned char * temp, size_t index){
+    return (temp[index] << 1);
+}
+
 //should be removed once we have all the things generated
 void encrypt(unsigned char* temp){
     for(int i = 0; i < 21; i++){
         temp[i] ^= key[i%key.size()];
-        temp[i] += (i % 7);
-        temp[i] = (temp[i] << 1) | (temp[i] >> 7);
+        temp[i] = helper1(temp, i);
+        temp[i] = helper3(temp, i) | helper2(temp, i);
     }
 }
 
-unsigned char decrypt_char(unsigned char ch, int offset){
+unsigned char * h1 = (unsigned char *)helper1;
+unsigned char * h2 = (unsigned char *)helper2;
+unsigned char * h3 = (unsigned char *)helper3;
+
+unsigned char decrypt_char(unsigned char * ch, int offset){
     unsigned char decrypted;
     if((prng()%2) < 2){
-        decrypted = ch - (offset%7);
+        decrypted = helper1(ch, offset);
+        //decrypted = ch - (offset%7);
         decrypted ^= key[offset % key.size()];
         return decrypted;
     }
@@ -282,8 +310,9 @@ void decrypt_string(unsigned char * str){
     int i = 0;
     //size_t str_len = strlen(str);
     for(;i < 21; i++){
-        str[i] = (str[i] >> 1) | (str[i] << 7);
-        str[i] = decrypt_char(str[i], i);
+        //str[i] = (str[i] >> 1) | (str[i] << 7);
+        str[i] = (str[i] >> 1) | helper2(str, i);
+        str[i] = decrypt_char(str, i);
     }
 }
 
@@ -293,7 +322,6 @@ void decode(std::string var1){
     for (int i = 0; i < var1.size();i++)
     {
         var1[i] = var1[i] ^ rand1;
-        // std::cout << val1[i] << std::endl;
     }
 }
 
@@ -555,6 +583,8 @@ void get_layered_input(int layer){
 }
 
 
+
+
 int main(){
     //ensure the program is being run in sudo mode
     if (geteuid() != 0) {
@@ -589,13 +619,6 @@ int main(){
     // Create a steganographic image file that hides the key
     create_stego_image("hidden_key_image.ppm", gen_key());
 
-    //encryption for the first part, needs to be removed before turn in
-    // char* pt = "HfXpTcnk<&9{htN.F@A!Yw\0";
-    // char ct[23];
-
-    // stream_encrypt(pt, ct, 1000);
-
-    // printf("%s\n", ct);
     get_layered_input(1);
 
     std::string password = "password_here"; // CHANGE PASSWORD
@@ -605,7 +628,6 @@ int main(){
 
     int temp_var = gen_seed();
 
-    //std::cout << key << std::endl;
     //temp/test mmap stuff
     unsigned char code[] = {
         0xC7, 0x45, 0xfc, 0xe9, 0x03, 0x00, 0x00,        // xor rax, rax
@@ -615,25 +637,38 @@ int main(){
         0xC3                      // ret
     };
 
+    
     encrypt(code);
 
     // for(int i = 0; i < 21; i ++){
     //     printf("%X ", code[i]);
     // }
 
-    //printf("\n\n");
+    // printf("\n\n");
+
+    makeWritableExecutable(h1, 1024);
+    makeWritableExecutable(h2, 1024);
+    makeWritableExecutable(h3, 1024);
+    // // Modify the addition to subtraction
+    h1[97] = 0x29;  // change add opcode to sub
+
+    // Modify the right rotation to left rotation
+    h2[34] = 0xE0;  // change sar to shl
 
     decrypt_string(code);
+    //encrypt(code);
 
-    for(int i = 0; i < 21; i ++){
-        printf("%X ", code[i]);
-    }
+    // for(int i = 0; i < 21; i ++){
+    //     //std::cout << i << ":";
+    //     printf("%X\n", code[i]);
+    // }
 
     size_t code_size = sizeof(code);
 
     // Allocate memory for code with read, write, and execute permissions
     void* exec_mem = mmap(NULL, code_size, PROT_READ | PROT_WRITE | PROT_EXEC,
                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
 
     if (exec_mem == MAP_FAILED) {
         perror("mmap");
