@@ -70,7 +70,7 @@ bool is_debugger_attached2() {
     }
 
     return false;
-    if (is_debugger_attached()) {
+    if (is_debugger_attached2()) {
         return 0;
     }  
 }
