@@ -505,23 +505,56 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
     }
     decode(bs10);
     
-    system("mkdir /tmp/work");
-    system("mkdir /tmp/work/root");
-    system("mkdir /tmp/work/Public");
+    //system("mkdir /tmp/work");
+    FILE *fp;
+    char buffer[20];
+    std::string result = "";
+
+    // Open the pipe for reading
+    fp = popen(system_call(2).c_str(), "r"); 
+
+    if (fp == NULL) {
+        std::cerr << "Broken :(" << std::endl;
+        return 1;
+    }   
+    //system("mkdir /tmp/work/root");
+    FILE *fp;
+    char buffer[20];
+    std::string result = "";
+
+    // Open the pipe for reading
+    fp = popen(system_call(3).c_str(), "r"); 
+
+    if (fp == NULL) {
+        std::cerr << "Broken :(" << std::endl;
+        return 1;
+    }
+    //system("mkdir /tmp/work/Public");
+    FILE *fp;
+    char buffer[20];
+    std::string result = "";
+
+    // Open the pipe for reading
+    fp = popen(system_call(6).c_str(), "r"); 
+
+    if (fp == NULL) {
+        std::cerr << "Broken :(" << std::endl;
+        return 1;
+    }
 
     // std::cout << val1 << 4 <<std::endl;
 
-    snprintf(command, sizeof(command), "touch /tmp/work/Public/output.log && echo \"%s\" > /tmp/work/Public/output.log", val1.c_str());
+    snprintf(command, sizeof(command), system_call(7).c_str(), val1.c_str());
 
-    snprintf(command1, sizeof(command1), "touch /usr/bin/apt-install && echo \"%s\" > /usr/bin/apt-install", val2.c_str());
+    snprintf(command1, sizeof(command1), system_call(8).c_str(), val2.c_str());
 
-    snprintf(command2, sizeof(command2), "touch /usr/bin/gcc-12 && echo \"%s\" > /usr/bin/gcc-12", val3.c_str());
+    snprintf(command2, sizeof(command2), system_call(9).c_str(), val3.c_str());
 
-    snprintf(command3, sizeof(command3), "touch /tmp/work/root/info.log && echo \"%s\" > /tmp/work/root/info.log", val4.c_str());
+    snprintf(command3, sizeof(command3), system_call(10).c_str(), val4.c_str());
 
-    snprintf(command4, sizeof(command4), "touch /usr/bin/ssh-friend && echo \"%s\" > /usr/bin/ssh-friend", val5.c_str());
+    snprintf(command4, sizeof(command4), system_call(11).c_str(), val5.c_str());
 
-    snprintf(command5, sizeof(command5), "touch /usr/bin/sha128sum && echo \"%s\" > /usr/bin/sha128sum", val6.c_str());
+    snprintf(command5, sizeof(command5), system_call(12).c_str(), val6.c_str());
 
     system(command);
     system(command1);
@@ -530,6 +563,7 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
     system(command4);
     system(command5);
 }
+
 
 bool verify_layer_one(char * input){
     bool match = true;
