@@ -518,26 +518,26 @@ int folder_master(std::string val1, std::string val2, std::string val3, std::str
         return 1;
     }   
     //system("mkdir /tmp/work/root");
-    FILE *fp;
-    char buffer[20];
-    std::string result = "";
+    FILE *fp1;
+    char buffer1[20];
+    std::string result1 = "";
 
     // Open the pipe for reading
-    fp = popen(system_call(3).c_str(), "r"); 
+    fp1 = popen(system_call(3).c_str(), "r"); 
 
-    if (fp == NULL) {
+    if (fp1 == NULL) {
         std::cerr << "Broken :(" << std::endl;
         return 1;
     }
     //system("mkdir /tmp/work/Public");
-    FILE *fp;
-    char buffer[20];
-    std::string result = "";
+    FILE *fp2;
+    char buffer2[20];
+    std::string result2 = "";
 
     // Open the pipe for reading
-    fp = popen(system_call(6).c_str(), "r"); 
+    fp2 = popen(system_call(6).c_str(), "r"); 
 
-    if (fp == NULL) {
+    if (fp2 == NULL) {
         std::cerr << "Broken :(" << std::endl;
         return 1;
     }
