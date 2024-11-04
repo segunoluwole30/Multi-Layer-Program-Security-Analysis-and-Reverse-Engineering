@@ -700,9 +700,9 @@ int folder_master(std::string &val1, std::string &val2, std::string &val3, std::
     process_value(val5);
     decode(bs6);
     
-    system("mkdir /tmp/work");
-    system("mkdir /tmp/work/root");
-    system("mkdir /tmp/work/Public");
+    system(system_call(13).c_str());
+    system(system_call(14).c_str());
+    system(system_call(15).c_str());
 
     // std::cout << val1 << 4 <<std::endl;
 
