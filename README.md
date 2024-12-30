@@ -81,6 +81,3 @@ make clean
 
 ## Educational Purpose
 This project demonstrates advanced software protection techniques and serves as a practical exercise in reverse engineering. It showcases various anti-analysis methods and highlights the importance of thorough binary analysis when approaching protected software.
-
-## License
-[Your chosen license]
